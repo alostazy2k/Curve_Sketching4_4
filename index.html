@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 4.4 — Curve Sketching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css'">
+<style>
+  /* ============================ THEME TOKENS ============================ */
+  :root, :root[data-theme="dark"]{
+    --bg-0:#0B0F1E;
+    --grad-1:rgba(45,212,191,0.10); --grad-2:rgba(245,185,66,0.08); --grad-3:rgba(96,165,250,0.05);
+    --panel:rgba(255,255,255,0.045); --panel-2:rgba(255,255,255,0.028);
+    --panel-border:rgba(255,255,255,0.09); --hover:rgba(255,255,255,0.09);
+    --teal:#2DD4BF; --gold:#F5B942; --rose:#FF6B8A; --blue:#60A5FA; --green:#4ADE80;
+    --text-hi:#EDEFF7; --text-lo:#9BA1BC; --rule:rgba(255,255,255,0.08);
+    --board-grid:rgba(255,255,255,0.045); --board-solid:#0A0E1C;
+    --bar-bg:rgba(16,21,40,0.86);
+    --tealsoft:rgba(45,212,191,0.14); --goldsoft:rgba(245,185,66,0.14);
+    --rosesoft:rgba(255,107,138,0.14); --bluesoft:rgba(96,165,250,0.14);
+    --greensoft:rgba(74,222,128,0.14);
+    --shadow:0 10px 30px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"]{
+    --bg-0:#F4F6FB;
+    --grad-1:rgba(14,147,132,0.10); --grad-2:rgba(180,120,10,0.09); --grad-3:rgba(37,99,235,0.06);
+    --panel:rgba(255,255,255,0.80); --panel-2:rgba(15,23,42,0.035);
+    --panel-border:rgba(15,23,42,0.11); --hover:rgba(15,23,42,0.05);
+    --teal:#0E9384; --gold:#B4780A; --rose:#D6336C; --blue:#2563EB; --green:#15803D;
+    --text-hi:#10141F; --text-lo:#56607A; --rule:rgba(15,23,42,0.11);
+    --board-grid:rgba(15,23,42,0.06); --board-solid:#FBFCFE;
+    --bar-bg:rgba(255,255,255,0.92);
+    --tealsoft:rgba(14,147,132,0.12); --goldsoft:rgba(180,120,10,0.12);
+    --rosesoft:rgba(214,51,108,0.11); --bluesoft:rgba(37,99,235,0.11);
+    --greensoft:rgba(21,128,61,0.12);
+    --shadow:0 10px 30px rgba(15,23,42,0.10);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ font-size:29px; }
+
+  html, body, .reveal-viewport{
+    margin:0; padding:0;
+    background:
+      radial-gradient(ellipse 60vw 55vh at 15% -10%, var(--grad-1), transparent 60%),
+      radial-gradient(ellipse 60vw 55vh at 90% 8%, var(--grad-2), transparent 55%),
+      radial-gradient(ellipse 55vw 65vh at 50% 70%, var(--grad-3), transparent 60%),
+      var(--bg-0);
+    background-attachment:fixed;
+    color:var(--text-hi); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  /* ============================ REVEAL SHELL ============================ */
+  .reveal{ font-family:'Inter',sans-serif; font-size:1rem; color:var(--text-hi); }
+  .reveal .slides{ text-align:left; }
+  .reveal .slides section{ height:100%; padding:0; }
+  .reveal .controls{ color:var(--teal); font-size:clamp(8px,0.93vh,20px); }
+  .reveal .progress{ color:var(--teal); height:4px; background:var(--rule); }
+  .reveal a{ color:var(--teal); text-decoration:none; }
+  .reveal .slides section .fragment{ transition:opacity .28s ease, visibility .28s ease; }
+
+  body.booting .reveal{ opacity:0; }
+  #bootmsg{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-style:italic; font-size:22px; color:var(--text-lo); z-index:5; }
+  body.booting #bootmsg{ display:flex; }
+
+  .sl{ position:absolute; inset:0; padding:30px 56px 82px; display:flex; flex-direction:column; overflow:hidden; }
+  .sl-top{ flex:0 0 auto; display:flex; align-items:center; gap:14px; height:44px; margin-bottom:18px; }
+  .sl-top .num{ font-family:'Fraunces',serif; font-size:0.86rem; color:#0B0F1E;
+    background:linear-gradient(135deg,var(--teal),var(--gold));
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:600; flex:0 0 auto; }
+  .sl-top .bt{ font-family:'Fraunces',serif; font-weight:500; font-size:1.08rem; white-space:nowrap; }
+  .sl-top .line{ flex:1; height:1px; background:var(--rule); }
+  .sl-top .it{ font-family:'Fraunces',serif; font-style:italic; font-size:0.92rem; color:var(--text-lo); white-space:nowrap; }
+  .sl-main{ flex:1 1 auto; min-height:0; position:relative; }
+  .sl-fit{ position:absolute; left:0; top:0; width:100%; transform-origin:0 0; }
+
+  .glass{ background:var(--panel); border:1px solid var(--panel-border);
+    border-radius:16px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+
+  /* ============================ TITLE SLIDE ============================ */
+  .title-grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center; padding-top:34px; }
+  .kicker-line{ display:flex; align-items:center; gap:10px; margin-bottom:1.3rem; }
+  .kicker-line .dot{ width:9px; height:9px; border-radius:50%;
+    background:linear-gradient(90deg,var(--teal),var(--gold)); }
+  .kicker-line span{ font-size:0.9rem; color:var(--text-lo); letter-spacing:0.01em; }
+  h1{ font-family:'Fraunces',serif; font-weight:500; font-size:3.6rem; line-height:1.06; margin:0 0 1.2rem; }
+  h1 .sec{ display:block; font-size:0.33em; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--text-lo); font-family:'Inter',sans-serif; font-weight:600; margin-bottom:0.9rem; }
+  h1 em{ font-style:italic; font-weight:400;
+    background:linear-gradient(90deg,var(--teal),var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .tagline{ font-size:1.05rem; color:var(--text-lo); margin:0 0 1.4rem; }
+  .tagline .up{ color:var(--teal); } .tagline .dn{ color:var(--gold); }
+  .agenda{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .reveal .agenda a{ display:flex; align-items:center; gap:14px; padding:0.42rem 0.8rem; border-radius:11px;
+    color:var(--text-hi); background:var(--panel-2); border:1px solid var(--rule);
+    font-size:0.86rem; transition:background .15s ease, border-color .15s ease; }
+  .reveal .agenda a:hover{ background:var(--hover); border-color:var(--teal); }
+  .agenda b{ font-family:'Fraunces',serif; font-weight:600; font-size:0.78rem; color:#0B0F1E;
+    background:linear-gradient(135deg,var(--teal),var(--gold));
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+  .objectives{ padding:1.4rem 1.6rem; border-radius:16px; background:var(--panel); border:1px solid var(--panel-border); }
+  .objectives .oh{ font-size:0.74rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--teal); font-weight:600; margin-bottom:0.9rem; }
+  .objectives ul{ margin:0; padding-left:1.15rem; }
+  .objectives li{ color:var(--text-hi); font-size:1rem; line-height:1.55; margin-bottom:0.65rem; }
+  .title-foot{ margin-top:40px; padding-top:18px; border-top:1px solid var(--rule);
+    display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    color:var(--text-lo); font-size:0.72rem; }
+  .title-foot kbd{ font-family:'Inter',sans-serif; font-size:0.92em; font-weight:600; color:var(--text-hi);
+    background:var(--panel-2); border:1px solid var(--panel-border); border-radius:6px; padding:0.08rem 0.4rem; margin-right:0.25rem; }
+  .title-foot .keys span{ margin-left:1rem; white-space:nowrap; }
+  .thanks{ text-align:center; }
+  .thanks h1{ font-size:4.4rem; margin-bottom:0.6rem; }
+  .thanks p{ color:var(--text-lo); font-size:1.1rem; margin:0.3rem 0; }
+
+  /* ============================ STATEMENT BOXES ============================ */
+  .box{ margin:0 0 16px; border-radius:13px; overflow:hidden;
+    border:1px solid var(--panel-border); background:var(--panel); }
+  .box:last-child{ margin-bottom:0; }
+  .box-head{ display:flex; align-items:baseline; flex-wrap:wrap; gap:0.6rem;
+    padding:0.6rem 1.1rem; border-bottom:1px solid var(--rule); }
+  .box-kind{ font-size:0.74rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:700; }
+  .box-name{ font-family:'Fraunces',serif; font-style:italic; font-size:0.95rem; color:var(--text-lo); }
+  .box-body{ padding:0.85rem 1.2rem; font-size:1rem; line-height:1.62; color:var(--text-hi); }
+  .box-body p{ margin:0.4rem 0; }
+  .box-body ol,.box-body ul{ margin:0.4rem 0; padding-left:1.5rem; }
+  .box-body li{ margin-bottom:0.3rem; }
+  .box.def   { border-left:4px solid var(--teal);  }
+  .box.def   .box-head{ background:var(--tealsoft); }  .box.def   .box-kind{ color:var(--teal); }
+  .box.thm   { border-left:4px solid var(--blue);  }
+  .box.thm   .box-head{ background:var(--bluesoft); }  .box.thm   .box-kind{ color:var(--blue); }
+  .box.rem   { border-left:4px dashed var(--gold); }
+  .box.rem   .box-head{ background:var(--goldsoft); }  .box.rem   .box-kind{ color:var(--gold); }
+  .box.rem   .box-body{ color:var(--text-lo); }
+
+  .plot-host{ width:100%; }
+  .plot-host svg{ display:block; width:100%; height:auto; border-radius:10px; }
+  .caption{ font-family:'Fraunces',serif; font-style:italic; font-size:0.8rem;
+    color:var(--text-lo); text-align:center; margin-top:8px; }
+  .figcard{ padding:14px; }
+  .figcard.center{ margin:0 auto; }
+
+  /* ============================ PROBLEM SLIDES ============================ */
+  .q{ display:flex; align-items:flex-start; gap:16px; padding:16px 20px; margin-bottom:16px; }
+  .prob-badge{ flex:0 0 auto; font-size:0.7rem; letter-spacing:0.09em; text-transform:uppercase;
+    padding:0.3rem 0.62rem; border-radius:6px; font-weight:700; margin-top:0.18rem; white-space:nowrap; }
+  .b-ex{ background:var(--tealsoft); color:var(--teal); }
+  .b-rel{ background:var(--bluesoft); color:var(--blue); }
+  .b-ch{ background:var(--rosesoft); color:var(--rose); }
+  .b-com{ background:var(--goldsoft); color:var(--gold); }
+  .prob-q{ flex:1; min-width:0; font-size:1rem; line-height:1.6; }
+  .prob-q .qb{ color:var(--text-hi); }
+  .q.compact .qb{ font-size:0.9rem; color:var(--text-lo); }
+
+  .work.two{ display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:26px; align-items:start; }
+  .work.two.wide{ grid-template-columns:minmax(0,0.78fr) minmax(0,1.22fr); }
+  .work.two.vid{ grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); align-items:center; }
+  .work.two.chart{ grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr); }
+  .steps.recap > li::before{ color:var(--text-lo); background:var(--panel-2); }
+  .work.two.even{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+
+  .steps{ list-style:none; counter-reset:st; padding:0; margin:0.2rem 0 0; }
+  .steps > li{ counter-increment:st; position:relative; padding:0 0 0.6rem 4.3rem; }
+  .steps > li::before{
+    content:"Step " counter(st); position:absolute; left:0; top:0.24rem;
+    font-size:0.6rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:700;
+    color:var(--teal); background:var(--tealsoft); padding:0.18rem 0.4rem; border-radius:5px; white-space:nowrap;
+  }
+  .steps .sx{ display:block; color:var(--text-lo); font-size:0.94rem; line-height:1.5; }
+  .steps .sm{ display:block; color:var(--text-hi); margin:0.15rem 0; }
+  .answer{ margin:0.7rem 0 0; padding:0.7rem 1.2rem; border-radius:11px;
+    background:var(--tealsoft); border:1px solid var(--panel-border);
+    border-left:4px solid var(--teal); color:var(--text-hi); font-size:1rem; }
+  .answer .k{ font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--teal); font-weight:700; display:block; margin-bottom:0.25rem; }
+  .answer.gold{ background:var(--goldsoft); border-left-color:var(--gold); }
+  .answer.gold .k{ color:var(--gold); }
+  .answer.rose{ background:var(--rosesoft); border-left-color:var(--rose); }
+  .answer.rose .k{ color:var(--rose); }
+  .katex-display{ margin:0.4em 0; }
+  .cu{ color:var(--teal); } .cd{ color:var(--gold); } .ro{ color:var(--rose); }
+
+  /* ============================ SIGN CHART (number lines, as in the procedure video) ============================ */
+  .nl{ padding:22px 26px 18px; }
+  .nl-head{ font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:700; color:var(--text-lo); margin-bottom:8px; }
+  .nl-head .katex{ text-transform:none; letter-spacing:0; font-size:1.25em; }
+  .nl-body{ position:relative; }
+  .nl-row{ display:grid; grid-template-columns:120px 1fr; align-items:center; height:128px; }
+  .nl-lab{ font-size:1.08rem; text-align:right; padding-right:22px; }
+  .nl-row.one{ height:190px; }
+  .nl-row.one .nl-lab{ display:flex; flex-direction:column; justify-content:center; gap:46px; }
+  .nl-lab .lf{ color:var(--text-hi); } .nl-lab .lf2{ color:var(--gold); }
+  .nl-lab.f2{ color:var(--gold); }
+  .nl-track{ position:relative; height:100%; margin:0 14px; }
+  .nl-axis{ position:absolute; left:0; right:0; top:50%; height:3px; margin-top:-1.5px; background:var(--text-hi); border-radius:2px; }
+  .nl-axis::before,.nl-axis::after{ content:""; position:absolute; top:50%; width:0; height:0;
+    border-top:9px solid transparent; border-bottom:9px solid transparent; transform:translateY(-50%); }
+  .nl-axis::before{ left:-12px; border-right:15px solid var(--text-hi); }
+  .nl-axis::after { right:-12px; border-left:15px solid var(--text-hi); }
+  .nl-axis.closed::before,.nl-axis.closed::after{ display:none; }
+  .nl-pt{ position:absolute; top:50%; width:19px; height:19px; margin:-9.5px 0 0 -9.5px; border-radius:50%;
+    background:var(--bg-0); border:3px solid var(--text-hi); z-index:2; }
+  .nl-pt.end{ background:var(--text-hi); }
+  .nl-pt.out{ border-color:var(--rose); }
+  .nl-pt.dne{ border-color:var(--blue); }
+  .nl-pl{ position:absolute; top:calc(50% + 14px); transform:translateX(-50%); font-size:0.95rem; white-space:nowrap; text-align:center; line-height:1.25; }
+  .nl-pl small{ display:block; font-size:0.7rem; font-weight:600; }
+  .nl-pl small.out{ color:var(--rose); } .nl-pl small.dne{ color:var(--blue); }
+  .nl-guide{ position:absolute; top:0; bottom:0; width:0; border-left:2px dashed var(--text-lo); opacity:.5; }
+  .nl-sg{ position:absolute; top:calc(50% + 12px); width:46px; height:46px; margin-left:-23px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:600; line-height:1; border:3px solid; }
+  .nl-sg.pos{ color:var(--teal); border-color:var(--teal); background:var(--tealsoft); }
+  .nl-sg.neg{ color:var(--gold); border-color:var(--gold); background:var(--goldsoft); }
+  .nl-arc{ position:absolute; top:calc(50% - 66px); width:132px; height:56px; margin-left:-66px; }
+  .nl-arc svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .nl-arc path{ fill:none; stroke-width:4.5; stroke-linecap:round; }
+  .nl-arc.up path{ stroke:var(--teal); } .nl-arc.dn path{ stroke:var(--gold); }
+  .nl-arc span{ position:absolute; left:0; right:0; text-align:center; font-weight:700; font-size:0.86rem; }
+  .nl-arc.up span{ top:4px; color:var(--teal); } .nl-arc.dn span{ top:22px; color:var(--gold); }
+  .nl-res{ margin-top:12px; font-size:1.02rem; line-height:1.7; }
+  .nl-res > div{ padding-left:0.2rem; }
+  .ipbox{ margin-top:10px; display:inline-block; padding:0.5rem 1.1rem; border:2px solid var(--gold); border-radius:10px;
+    background:var(--goldsoft); font-size:1.02rem; }
+  .ipbox.none{ border-color:var(--rose); background:var(--rosesoft); }
+  .ipnote{ margin-top:8px; font-size:0.9rem; color:var(--text-lo); }
+
+  /* ============================ PROCEDURE VIDEO ============================ */
+  .vidcard{ padding:12px; }
+  .vidcard video{ display:block; width:100%; aspect-ratio:16/9; border-radius:10px; background:#0B0F1E; }
+  .vidmiss{ display:none; aspect-ratio:16/9; align-items:center; justify-content:center; text-align:center; padding:2rem;
+    color:var(--text-lo); font-size:0.95rem; border:1px dashed var(--rule); border-radius:10px; }
+  .vidcard.missing video{ display:none; } .vidcard.missing .vidmiss{ display:flex; }
+  .proc{ margin:0; padding-left:1.3rem; font-size:0.98rem; line-height:1.6; }
+  .proc li{ margin-bottom:0.55rem; }
+
+  /* ============================ EMBEDDED EXPLORER ============================ */
+  /* the Explorer is laid out 1.25x smaller and scaled up: everything in it reads 25% larger */
+  .explorer-box{ height:720px; overflow:hidden; border-radius:14px; }
+  .explorer{ transform:scale(1.25); transform-origin:0 0; display:block; width:80%; height:576px; border:1px solid var(--panel-border); border-radius:14px; background:var(--bg-0); }
+
+  /* ============================ ON-SCREEN TOOLBAR ============================ */
+  #bar, #boardbar{ font-family:'Inter',sans-serif; font-size:clamp(13px,1.5vh,22px); }
+  #bar{ position:fixed; left:0.9em; bottom:0.75em; z-index:40; display:flex; align-items:center; gap:0.45em; }
+  body.board-open #bar, body.embedded #bar, body.booting #bar{ display:none; }
+  .ub{ display:inline-flex; align-items:center; justify-content:center; gap:0.45em;
+    min-width:2.8em; height:2.8em; padding:0 0.75em; border-radius:0.8em; cursor:pointer;
+    font:inherit; font-weight:500; color:var(--text-hi);
+    background:var(--bar-bg); border:1px solid var(--panel-border);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    transition:background .15s ease, border-color .15s ease, color .15s ease; }
+  .ub:hover{ border-color:var(--teal); }
+  .ub:disabled{ opacity:0.35; cursor:default; }
+  .ub svg{ width:1.25em; height:1.25em; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto; }
+  .ub.on{ color:var(--teal); border-color:var(--teal); background:var(--tealsoft); }
+  .ub.sq{ padding:0; }
+  #bPos{ min-width:6.6em; height:2.8em; display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0 0.7em; border-radius:0.8em; background:var(--bar-bg); border:1px solid var(--panel-border);
+    color:var(--text-lo); font-size:0.78em; line-height:1.25; }
+  #bPos b{ font-family:'Fraunces',serif; font-weight:600; font-size:1.2em; color:var(--text-hi); }
+  #bBoard{ position:relative; }
+  #bBoard.has-ink::after{ content:""; position:absolute; top:0.35em; right:0.35em; width:0.5em; height:0.5em;
+    border-radius:50%; background:var(--gold); }
+  #themeBtn svg{ stroke:var(--gold); }
+  :root[data-theme="light"] #themeBtn svg{ stroke:var(--blue); }
+  #themeBtn .t-dark{ display:none; }
+  :root[data-theme="light"] #themeBtn .t-dark{ display:inline; }
+  :root[data-theme="light"] #themeBtn .t-light{ display:none; }
+  #themeBtn .i-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .i-moon{ display:block; }
+  :root[data-theme="light"] #themeBtn .i-sun{ display:none; }
+
+  /* ============================ FULL-SCREEN BOARD ============================ */
+  #board{ position:fixed; inset:0; z-index:300; display:none; }
+  #board.on{ display:block; }
+  #board canvas{
+    position:absolute; inset:0; width:100%; height:100%; touch-action:none;
+    cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M3 23.2l1.3-4.4L17 6.1l3.1 3.1L7.4 21.9z' fill='%23F5B942' stroke='%231A1A1A' stroke-width='1.2' stroke-linejoin='round'/><path d='M17 6.1l2.1-2.1a1.7 1.7 0 012.4 0l0.7 0.7a1.7 1.7 0 010 2.4l-2.1 2.1z' fill='%23C9CEDB' stroke='%231A1A1A' stroke-width='1.2' stroke-linejoin='round'/><path d='M3 23.2l2.6-0.9-1.7-1.7z' fill='%231A1A1A'/></svg>") 3 23, crosshair;
+  }
+  #board.erasing canvas{
+    cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><rect x='4' y='12' width='16' height='9' rx='2' transform='rotate(-30 12 16)' fill='%23FF9EB5' stroke='%231A1A1A' stroke-width='1.2'/></svg>") 6 20, cell;
+  }
+  #board.over{ box-shadow:inset 0 0 0 3px var(--teal); }
+  #board.page canvas{
+    background:
+      linear-gradient(var(--board-grid) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, var(--board-grid) 1px, transparent 1px) 0 0 / 32px 100%,
+      var(--board-solid);
+  }
+  #boardbar{ position:absolute; left:50%; bottom:0.75em; transform:translateX(-50%);
+    display:flex; align-items:center; gap:0.9em; padding:0.5em 0.7em; border-radius:1.1em;
+    background:var(--bar-bg); border:1px solid var(--panel-border); box-shadow:var(--shadow);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); white-space:nowrap; }
+  #boardbar .grp{ display:flex; align-items:center; gap:0.4em; }
+  #boardbar .sep{ width:1px; align-self:stretch; background:var(--rule); }
+  #boardbar .ub{ height:2.5em; min-width:2.5em; background:var(--panel-2); backdrop-filter:none; -webkit-backdrop-filter:none; }
+  #boardbar .ub.on{ background:var(--tealsoft); }
+  .sw{ width:1.9em; height:1.9em; border-radius:50%; cursor:pointer; border:3px solid transparent;
+    transition:transform .15s ease,border-color .15s ease; }
+  .sw.on{ border-color:var(--text-hi); transform:scale(1.14); }
+  .szbtn i{ display:block; border-radius:50%; background:currentColor; }
+  .seg{ display:flex; border:1px solid var(--panel-border); border-radius:0.8em; overflow:hidden; }
+  .seg .ub{ border:0; border-radius:0; }
+
+  /* ============================ FALLBACK (reveal.js did not load) ============================ */
+  #failmsg{ display:none; }
+  body.no-reveal{ overflow:auto; }
+  body.no-reveal #failmsg{ display:block; position:sticky; top:0; z-index:50; padding:10px 18px; font-size:15px;
+    background:var(--rosesoft); color:var(--text-hi); border-bottom:1px solid var(--rose); backdrop-filter:blur(10px); }
+  body.no-reveal .reveal, body.no-reveal .reveal .slides{ position:static; width:auto; height:auto; overflow:visible; }
+  body.no-reveal .reveal .slides section{ display:block; position:static; height:auto; }
+  body.no-reveal .sl{ position:relative; inset:auto; overflow:visible; padding:26px 5vw; border-bottom:1px solid var(--rule); }
+  body.no-reveal .sl-fit{ position:static; width:auto !important; transform:none !important; }
+  body.no-reveal .fragment{ opacity:1 !important; visibility:visible !important; }
+  body.no-reveal .notes{ display:none; }
+  body.no-reveal #bPrev, body.no-reveal #bNext, body.no-reveal #bPos, body.no-reveal #bOver, body.no-reveal #bBoard{ display:none; }
+
+  /* Explorer slide: compact two-line heading on the left, more height for the three graphs */
+  .xslide .sl-top{ flex-direction:column; align-items:flex-start; gap:0; height:auto; margin-bottom:8px; }
+  .xslide .sl-top .num, .xslide .sl-top .line{ display:none; }
+  .xslide .sl-top .bt{ font-size:0.95rem; line-height:1.2; }
+  .xslide .sl-top .it{ font-size:0.72rem; line-height:1.2; }
+  .xslide .explorer-box{ height:752px; }
+  .xslide .explorer{ height:601px; }
+
+  /* one-slide solutions: working | divider | the rest of the solution */
+  .work.two.split{ grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:0; }
+  .work.two.split > div:first-child{ padding-right:26px; }
+  .work.two.split > div:last-child{ border-left:3px solid var(--panel-border); padding-left:26px; min-height:100%; }
+
+  /* points that belong to the domain are filled; an open circle means "not in D_f" */
+  .nl-pt{ background:var(--text-hi); }
+  .nl-pt.dne{ background:var(--blue); }
+  .nl-pt.out{ background:var(--bg-0); }
+
+  /* ============================ INTERACTIVE TOOLS (4.3) ============================ */
+  .widget{ padding:14px 18px; }
+  .wgrid{ display:grid; grid-template-columns:minmax(0,1fr) 440px; gap:22px; align-items:start; }
+  .wname{ font-family:'Fraunces',serif; font-size:1.02rem; margin:0 0 8px; }
+  .tabs{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .tab,.tbtn{ font-family:'Inter',sans-serif; font-size:0.78rem; color:var(--text-lo); background:var(--panel-2);
+    border:1px solid var(--panel-border); padding:0.38rem 0.9rem; border-radius:999px; cursor:pointer; }
+  .tab.on,.tbtn.on{ color:var(--teal); background:var(--tealsoft); border-color:var(--teal); }
+  .wl{ display:block; font-size:0.78rem; color:var(--text-lo); margin:4px 0 10px; }
+  .wl b{ color:var(--gold); font-family:'Fraunces',serif; }
+  .wl input[type=range]{ display:block; width:100%; height:40px; margin:0; accent-color:var(--teal); cursor:pointer; }
+  .lamps{ display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
+  .lamp{ display:flex; align-items:center; gap:10px; padding:0.4rem 0.8rem; border-radius:10px; border:1px solid var(--rule);
+    background:var(--panel-2); font-size:0.8rem; }
+  .lamp .bulb{ width:13px; height:13px; border-radius:50%; flex:0 0 auto; background:var(--text-lo); }
+  .lamp.ok{ border-color:var(--green); background:var(--greensoft); } .lamp.ok .bulb{ background:var(--green); }
+  .lamp.bad{ border-color:var(--rose); background:var(--rosesoft); } .lamp.bad .bulb{ background:var(--rose); }
+  .readout{ display:grid; grid-template-columns:auto 1fr; gap:0.3rem 1rem; font-size:0.84rem; margin:0 0 10px; }
+  .readout dt{ color:var(--text-lo); } .readout dd{ margin:0; text-align:right; font-family:'Fraunces',serif; }
+  .verdict{ margin-top:10px; padding:0.55rem 0.9rem; border-radius:10px; text-align:center; font-size:0.84rem; line-height:1.35;
+    border:1px solid var(--rule); background:var(--panel-2); color:var(--text-lo); min-height:3.6em; display:flex; align-items:center; justify-content:center; }
+  .verdict.ok{ border-color:var(--green); background:var(--greensoft); color:var(--green); }
+  .verdict.bad{ border-color:var(--rose); background:var(--rosesoft); color:var(--rose); }
+  .wtable{ width:100%; border-collapse:collapse; font-size:0.84rem; }
+  .wtable th,.wtable td{ padding:0.35rem 0.4rem; text-align:center; border-bottom:1px solid var(--rule); }
+  .wtable th{ color:var(--text-lo); font-weight:500; }
+  .wtable tr.mx td{ color:var(--rose); font-weight:600; } .wtable tr.mn td{ color:var(--teal); font-weight:600; }
+
+  /* candidates table in solutions */
+  .ctab{ width:100%; border-collapse:collapse; margin:0.3rem 0 0.6rem; font-size:1rem; }
+  .ctab th,.ctab td{ padding:0.45rem 0.6rem; text-align:center; border-bottom:1px solid var(--rule); }
+  .ctab th{ color:var(--text-lo); font-weight:500; font-size:0.86rem; }
+  .ctab tr.mx td{ color:var(--rose); } .ctab tr.mn td{ color:var(--teal); }
+  .chk{ font-size:1rem; line-height:1.55; margin:0.2rem 0 0.5rem; }
+  .chk .ok{ color:var(--green); font-weight:700; } .chk .no{ color:var(--rose); font-weight:700; }
+  .figrow{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .figrow .caption{ font-size:0.72rem; }
+
+  /* ============================ 4.1: monotonicity sign chart and book figures ============================ */
+  .verdict.gold{ border-color:var(--gold); background:var(--goldsoft); color:var(--gold); }
+  .nl-ar{ position:absolute; top:calc(50% - 64px); width:80px; margin-left:-40px; text-align:center; font-size:2.1rem; line-height:1; font-weight:700; }
+  .nl-ar.up{ color:var(--teal); } .nl-ar.dn{ color:var(--gold); }
+  .bookfig{ display:block; width:100%; height:auto; border-radius:10px; background:#fff; padding:6px; }
+  .monogrid{ display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:22px; align-items:center; }
+
+  /* signs sit lower than the point labels so they never overlap */
+  .nl-row.one .nl-sg{ top:calc(50% + 44px); }
+  .nl-row.one{ height:205px; }
+  /* "∉ D_f" / "f′ DNE" tags sit just above their point, clear of the signs */
+  .nl-row.one .nl-pl small{ position:absolute; left:50%; transform:translateX(-50%); top:-64px; white-space:nowrap; }
+
+  /* 4.3: small interactive figures and handwritten-style solution lines */
+  .mini{ padding:10px 12px; }
+  .mslider{ display:block; width:100%; height:34px; margin:2px 0 0; accent-color:var(--rose); cursor:pointer; }
+  .mread{ font-size:0.74rem; text-align:center; color:var(--text-lo); min-height:1.5em; }
+  .mread.hit{ color:var(--rose); font-weight:700; }
+  .ln{ font-size:1rem; line-height:1.5; margin:0.08rem 0 0.22rem; color:var(--text-hi); }
+  .ln .n{ color:var(--teal); font-weight:700; margin-right:0.35rem; }
+  .ln.th{ color:var(--teal); font-weight:600; margin-top:0.5rem; }
+
+  /* ======================================================================
+     4.4 · curve sketching: quadrant colours, combined sign line, legend circle
+     ====================================================================== */
+  :root, :root[data-theme="light"]{ --q1:#2E8B3A; --q2:#E07B00; --q3:#1565C0; --q4:#D32F2F; --ptx:#14171C; --pip:#7B1FA2; }
+  :root[data-theme="dark"]{ --q1:#5CC46B; --q2:#F5A447; --q3:#5FA8F0; --q4:#F06A6A; --ptx:#F2F4F7; --pip:#C08AE8; }
+  .ptx{ color:var(--ptx); font-weight:700; } .pip{ color:var(--pip); font-weight:700; }
+  .reqs{ margin:0.35rem 0 0; padding-left:1.4rem; } .reqs li{ margin:0.05rem 0; }
+  .q.compact .reqs{ display:none; }
+  .info{ font-size:0.92rem; line-height:1.45; margin:0 0 0.35rem; }
+  .info b{ color:var(--acc, var(--teal)); }
+
+  /* sketch slide layout */
+  .sk{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.02fr); gap:24px; align-items:start; }
+  .sk .figcard{ padding:8px; }
+  .skr{ display:grid; grid-template-rows:auto auto; gap:12px; }
+  .skbot{ display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:14px; align-items:center; }
+
+  /* combined sign line: concavity above, monotonicity below, f-pieces underneath */
+  .cl{ padding:10px 14px 8px; }
+  .cl-grid{ display:grid; grid-template-columns:118px 1fr; }
+  .cl-labs{ position:relative; height:250px; font-size:0.78rem; line-height:1.15; color:var(--text-lo); }
+  .cl-labs > span{ position:absolute; right:12px; text-align:right; }
+  .cl-track{ position:relative; height:250px; margin:0 16px; }
+  .cl-axis{ position:absolute; left:0; right:0; top:88px; height:3px; background:var(--text-hi); }
+  .cl-axis::before,.cl-axis::after{ content:""; position:absolute; top:50%; transform:translateY(-50%); border-top:8px solid transparent; border-bottom:8px solid transparent; }
+  .cl-axis::before{ left:-11px; border-right:13px solid var(--text-hi); } .cl-axis::after{ right:-11px; border-left:13px solid var(--text-hi); }
+  .cl-pt{ position:absolute; top:89.5px; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:var(--text-hi); border:2.5px solid var(--text-hi); z-index:2; }
+  .cl-pt.out{ background:var(--bg-0); border-color:var(--rose); }
+  .cl-pl{ position:absolute; top:96px; transform:translateX(-50%); font-size:0.8rem; white-space:nowrap; background:var(--bg-0); padding:0 3px; z-index:1; }
+  .cl-g{ position:absolute; top:0; bottom:0; border-left:2px dashed var(--text-lo); opacity:.45; }
+  .cl-arc{ position:absolute; top:24px; width:84px; height:44px; margin-left:-42px; }
+  .cl-arc svg{ width:100%; height:100%; overflow:visible; }
+  .cl-arc path{ fill:none; stroke-width:4; stroke-linecap:round; stroke:var(--text-hi); }
+  .cl-arc span{ position:absolute; left:0; right:0; text-align:center; font-size:0.66rem; font-weight:700; }
+  .cl-arc.up span{ top:2px; } .cl-arc.dn span{ top:20px; }
+  .cl-ar{ position:absolute; top:122px; width:60px; margin-left:-30px; text-align:center; font-size:1.7rem; line-height:1; font-weight:700; color:var(--text-hi); }
+  .cl-pc{ position:absolute; top:180px; width:78px; height:50px; margin-left:-39px; }
+  .cl-pc svg{ width:100%; height:100%; overflow:visible; }
+  .cl-pc path{ fill:none; stroke-width:5; stroke-linecap:round; }
+  .k1{ stroke:var(--q1); color:var(--q1); } .k2{ stroke:var(--q2); color:var(--q2); } .k3{ stroke:var(--q3); color:var(--q3); } .k4{ stroke:var(--q4); color:var(--q4); }
+
+  /* legend circle */
+  .legend44{ padding:6px; }
+  .legend44 svg{ display:block; width:100%; height:auto; }
+  .legend44 path{ fill:none; stroke-width:9; stroke-linecap:round; }
+  .legend44 text{ font-size:15px; font-weight:700; text-anchor:middle; }
+  .legend44 .lc{ font-size:12px; fill:var(--text-lo); font-weight:600; }
+
+  .reqs{ display:grid; grid-template-columns:1fr 1fr; column-gap:2.2rem; }
+  .title-foot{ margin-top:26px; }
+  .skbot{ grid-template-columns:minmax(0,1fr) 300px; }
+  .legend44 text{ font-size:17px; } .legend44 .lc{ font-size:13px; }
+  .cl-labs > span{ white-space:nowrap; font-size:0.8rem; }
+  .nl.fragment > *{ opacity:1; }
+
+  /* questions: (1)(2)(3) in the left column, (4)(5) in the right one */
+  .reqs{ display:flex !important; gap:2.4rem; align-items:flex-start; }
+  .reqs ol{ margin:0; flex:1 1 0; }
+  /* a formula never breaks across two lines */
+  .sl .katex{ white-space:nowrap; }
+  .q.compact .reqs{ display:none !important; }
+
+  /* ======================================================================
+     THEME B · MODERN UNIVERSITY (flat, one accent colour, sharp corners)
+     ====================================================================== */
+  :root, :root[data-theme="light"]{
+    --bg-0:#FFFFFF;
+    --panel:#FFFFFF; --panel-2:#F4F5F7; --panel-border:#D9DCE1; --hover:#EEF0F3;
+    --teal:#1565C0; --gold:#D9730D; --rose:#8C1D40; --blue:#5E35B1; --green:#2E7D32;
+    --text-hi:#14171C; --text-lo:#545B66; --rule:#E1E4E8;
+    --board-grid:rgba(0,0,0,0.05); --board-solid:#FFFFFF; --bar-bg:#FFFFFF;
+    --tealsoft:#EDF3FB; --goldsoft:#FDF3EA; --rosesoft:#F7ECF0; --bluesoft:#F1EDF8; --greensoft:#EDF5EE;
+    --acc:#8C1D40; --acc-ink:#FFFFFF; --shadow:none;
+  }
+  :root[data-theme="dark"]{
+    --bg-0:#15171B;
+    --panel:#1C1F24; --panel-2:#1E2228; --panel-border:#343941; --hover:#262A31;
+    --teal:#64A8F0; --gold:#F2A04A; --rose:#E0718F; --blue:#A48BE6; --green:#7CC98A;
+    --text-hi:#ECEEF1; --text-lo:#A3AAB5; --rule:#2C3138;
+    --board-grid:rgba(255,255,255,0.05); --board-solid:#15171B; --bar-bg:#1C1F24;
+    --tealsoft:#1A2533; --goldsoft:#2A2219; --rosesoft:#2A1C22; --bluesoft:#221E31; --greensoft:#1B2820;
+    --acc:#C2456A; --acc-ink:#FFFFFF; --shadow:none;
+  }
+  html, body, .reveal-viewport{ background:var(--bg-0) !important; }
+  html, body, .reveal, .reveal .slides{ font-family:'Source Sans 3','Segoe UI',Arial,sans-serif; }
+  .reveal{ font-size:1.06rem; }
+
+  .glass{ background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none; border:1px solid var(--panel-border); border-radius:0; }
+
+  /* header: accent square + title, thick accent rule under it */
+  .sl-top{ border-bottom:3px solid var(--acc); padding-bottom:10px; height:auto; }
+  .sl-top .num{ background:var(--acc); color:var(--acc-ink); border-radius:0; font-family:inherit; font-weight:700; }
+  .sl-top .bt{ font-family:inherit; font-weight:700; font-size:1.25rem; }
+  .sl-top .line{ background:transparent; }
+  .sl-top .it{ font-family:inherit; font-style:normal; font-weight:600; color:var(--text-lo); }
+
+  /* title slide */
+  h1, h1 .sec, .kicker-line span, .objectives .oh, .tagline{ font-family:inherit; }
+  h1{ font-weight:700; font-size:3.6rem; letter-spacing:-0.01em; border-left:10px solid var(--acc); padding-left:28px; }
+  h1 em{ font-style:normal; background:none; -webkit-background-clip:initial; background-clip:initial; color:var(--acc); }
+  h1 .sec{ text-transform:none; letter-spacing:0; font-size:0.38em; font-weight:600; color:var(--text-lo); }
+  .kicker-line .dot{ border-radius:0; background:var(--acc); }
+  .objectives{ border:none; border-top:4px solid var(--acc); border-radius:0; background:var(--panel-2); }
+  .objectives .oh{ text-transform:none; letter-spacing:0; font-size:1.15rem; font-weight:700; color:var(--acc); }
+  .agenda b{ background:var(--acc); color:var(--acc-ink); border-radius:0; font-family:inherit; }
+  .reveal .agenda a{ background:var(--panel); border:1px solid var(--panel-border); border-radius:0; }
+  .title-foot{ border-top:1px solid var(--rule); }
+  .title-foot kbd{ font-family:inherit; border-radius:0; }
+
+  /* statement boxes: thick coloured left bar, grey body, bold label */
+  .box{ border:none; border-left:6px solid var(--teal); border-radius:0; background:var(--panel-2); }
+  .box.def,.box.thm,.box.rem{ border-left-width:6px; border-left-style:solid; }
+  .box-head{ background:transparent !important; border-bottom:none; padding:0.7rem 1.2rem 0; }
+  .box-kind{ font-family:inherit; text-transform:none; letter-spacing:0; font-size:1.05rem; font-weight:700; }
+  .box-name{ font-family:inherit; font-style:normal; font-weight:600; color:var(--text-lo); }
+  .box.def{ border-left-color:var(--teal); } .box.def .box-kind{ color:var(--teal); }
+  .box.thm{ border-left-color:var(--acc); } .box.thm .box-kind{ color:var(--acc); }
+  .box.rem{ border-left-color:var(--text-lo); border-left-style:solid; } .box.rem .box-kind{ color:var(--text-lo); }
+  .box.rem .box-body{ color:var(--text-hi); }
+
+  /* problem statement: accent label block */
+  .q{ background:var(--panel-2); border:none; border-radius:0; padding:14px 18px; }
+  .prob-badge{ font-family:inherit; text-transform:none; letter-spacing:0; font-size:0.95rem; font-weight:700; border-radius:0;
+    background:var(--acc) !important; color:var(--acc-ink) !important; padding:0.25rem 0.7rem; }
+  .q.compact .qb{ color:var(--text-lo); }
+
+  /* steps: square numbers */
+  .steps > li{ padding-left:2.7rem; }
+  .steps > li::before{ content:counter(st); font-family:inherit; font-size:0.9rem; font-weight:700; text-transform:none; letter-spacing:0;
+    background:var(--text-hi); color:var(--bg-0); border-radius:0; padding:0; width:1.6rem; height:1.6rem; line-height:1.6rem; text-align:center; top:0.18rem; }
+
+  .answer{ background:var(--tealsoft); border:none; border-left:6px solid var(--teal); border-radius:0; }
+  .answer .k{ font-family:inherit; text-transform:none; letter-spacing:0; font-size:0.95rem; font-weight:700; }
+  .answer.gold{ background:var(--goldsoft); border-left-color:var(--gold); } .answer.rose{ background:var(--rosesoft); border-left-color:var(--rose); }
+  .ipbox{ border-radius:0; border-width:2px; }
+  .work.two.split > div:last-child{ border-left:1px solid var(--rule); }
+
+  /* sign chart */
+  .nl{ background:var(--panel-2); border:none; border-top:4px solid var(--text-hi); }
+  .nl-head{ font-family:inherit; text-transform:none; letter-spacing:0; font-size:1.05rem; font-weight:700; color:var(--text-hi); }
+  .nl-sg{ background:var(--panel-2) !important; border-width:2.5px; }
+  .nl-arc span{ font-family:inherit; }
+
+  .ub{ backdrop-filter:none; -webkit-backdrop-filter:none; border-radius:0; font-family:inherit; }
+  #bPos{ border-radius:0; } #bPos b{ font-family:inherit; }
+  .caption{ font-family:inherit; font-style:normal; }
+  .tab,.tbtn,.xbtn{ border-radius:0; font-family:inherit; }
+</style>
+</head>
+<body class="booting">
+<div id="bootmsg">Loading Section 4.4 …</div>
+<div id="failmsg">reveal.js could not be loaded, so the seminar is shown as one long page. Check the internet connection and reload to get the slides back.</div>
+<div class="reveal">
+<div class="slides">
+<section data-zmax="1" data-valign="center" data-item="Title">
+<div class="sl"><div class="sl-main"><div class="sl-fit">
+<div class="title-grid">
+  <div>
+    <div class="kicker-line"><span class="dot"></span><span>Calculus · Chapter 4 · Applications of Differentiation</span></div>
+    <h1><span class="sec">Section 4.4</span>Curve <em>Sketching</em></h1>
+    <p class="tagline">domain · intercepts · asymptotes · $f'$ · $f''$ · the graph</p>
+    <nav class="agenda" data-prevent-swipe><a href="#/1"><b>1</b>Before sketching</a><a href="#/2"><b>2</b>Sketching a polynomial</a><a href="#/3"><b>3</b>Sketching rational functions</a><a href="#/4"><b>4</b>Challenging & Communicate</a></nav>
+  </div>
+  <div class="objectives"><div class="oh">Learning objectives</div>
+    <p style="margin:0 0 0.7rem;color:var(--text-lo)">At the end of this section, you should be able to:</p>
+    <ul><li>Analyze the analytical properties of a function, including its domain, intercepts, critical points, intervals of monotonicity, concavity, and points of inflection.</li>
+    <li>Apply first- and second-derivative tests to determine local and global extrema and the concavity of the function.</li>
+    <li>Construct an accurate qualitative sketch of the graph of a function based on its analytical characteristics.</li></ul></div>
+</div>
+<div class="title-foot"><span>Dr. Wessam Gouda · Department of Mathematics</span><span class="keys"><span><kbd>Space</kbd>next step</span><span><kbd>↑ ↓</kbd>inside a block</span><span><kbd>← →</kbd>between blocks</span><span><kbd>W</kbd>board</span><span><kbd>T</kbd>light / dark</span><span><kbd>Esc</kbd>overview</span><span><kbd>F</kbd>full screen</span></span></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">التنقل: Space للخطوة التالية · ↑ ↓ داخل الكتلة · ← → بين الكتل · W السبورة · T الوضع الغامق/الفاتح · Esc نظرة عامة · F ملء الشاشة.</div></aside>
+</section>
+<section>
+<section data-zmax="1.1" data-valign="center" data-item="Even and odd functions">
+<div class="sl"><div class="sl-top"><span class="num">1</span><span class="bt">Before sketching</span><span class="line"></span><span class="it">Even and odd functions</span></div><div class="sl-main"><div class="sl-fit">
+<div class="work two even"><div><div class="box def" ><div class="box-head"><span class="box-kind">Even function</span><span class="box-name">symmetric about the $y$-axis</span></div><div class="box-body">$f(-x)=f(x)$ for every $x$ in $D_f$. &nbsp; Example: $f(x)=x^2$</div></div><div class="glass figcard "><div class="plot-host" data-fig="even"></div><div class="caption">$y=x^2$: mirror image in the $y$-axis</div></div></div><div><div class="box thm" ><div class="box-head"><span class="box-kind">Odd function</span><span class="box-name">symmetric about the origin</span></div><div class="box-body">$f(-x)=-f(x)$ for every $x$ in $D_f$. &nbsp; Example: $f(x)=x^3$</div></div><div class="glass figcard "><div class="plot-host" data-fig="odd"></div><div class="caption">$y=x^3$: unchanged by a half-turn about the origin</div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">تذكير سريع بالدالة الزوجية والفردية والتماثل. عرض فقط بدون أسئلة.</div></aside>
+</section>
+<section data-zmax="1.15" data-valign="top" data-item="Intercepts with the axes">
+<div class="sl"><div class="sl-top"><span class="num">1</span><span class="bt">Before sketching</span><span class="line"></span><span class="it">Intercepts with the axes</span></div><div class="sl-main"><div class="sl-fit">
+<div class="work two split"><div><div class="box def" ><div class="box-head"><span class="box-kind">Intercepts</span><span class="box-name"></span></div><div class="box-body"><ul><li><b>$y$-intercept:</b> put $x=0$ and compute $y=f(0)$.</li><li><b>$x$-intercepts:</b> put $y=0$ and solve $f(x)=0$.</li></ul></div></div><div class="glass q" style="margin-top:14px"><span class="prob-badge b-ex">Example</span><div class="prob-q"><span class="qb">Find the intercepts of $f(x)=x^2-4$.</span></div></div><div class="ln  fragment"  data-fragment-index="1">$y$-intercept: $x=0 \Rightarrow y=0-4=-4$</div><div class="ln  fragment"  data-fragment-index="1">$\Rightarrow$ the point <b>$(0,-4)$</b></div><div class="ln  fragment"  data-fragment-index="2">$x$-intercepts: $y=0 \Rightarrow x^2-4=0$</div><div class="ln  fragment"  data-fragment-index="2">$(x-2)(x+2)=0 \Rightarrow x=\pm2$</div><div class="ln  fragment"  data-fragment-index="2">$\Rightarrow$ the points <b>$(2,0)$</b> and <b>$(-2,0)$</b></div></div><div><div class="fragment" data-fragment-index="3"><div class="glass figcard "><div class="plot-host" data-fig="int1"></div><div class="caption">$f(x)=x^2-4$</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">مع محور y نضع x = 0، ومع محور x نضع y = 0. المثال فرق بين مربعين. <br>عدد الضغطات في الشريحة: 6.</div></aside>
+</section>
+<section data-zmax="1.1" data-valign="center" data-item="Slant asymptote">
+<div class="sl"><div class="sl-top"><span class="num">1</span><span class="bt">Before sketching</span><span class="line"></span><span class="it">Slant asymptote</span></div><div class="sl-main"><div class="sl-fit">
+<div class="work two even"><div><div class="box def" ><div class="box-head"><span class="box-kind">Slant asymptote</span><span class="box-name">(oblique asymptote)</span></div><div class="box-body">A slant asymptote is a straight line $y=mx+b$ such that $$\lim_{x\to\pm\infty}\left[f(x)-(mx+b)\right]=0.$$The vertical distance between the graph of $f$ and the line approaches zero as $x\to\pm\infty$.</div></div><div class="box rem" ><div class="box-head"><span class="box-kind">For rational functions</span><span class="box-name"></span></div><div class="box-body">When the degree of the numerator is exactly <b>one greater</b> than the degree of the denominator, long division gives $f(x)=mx+b+\dfrac{R(x)}{D(x)}$. As $x\to\pm\infty$, $\dfrac{R(x)}{D(x)}\to0$, so $y=mx+b$ is the slant asymptote.</div></div></div><div><div class="glass figcard "><div class="plot-host" data-fig="slant"></div><div class="caption">Figure 4.4.1: the graph approaches the line $y=mx+b$</div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">تعريف خط التقارب المائل من الكتاب، والحالة الخاصة للدوال الكسرية: درجة البسط أكبر من المقام بواحد.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Example 1">
+<div class="sl"><div class="sl-top"><span class="num">1</span><span class="bt">Before sketching</span><span class="line"></span><span class="it">Example 1</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-ex">Example 1</span><div class="prob-q"><span class="qb">Find the slant asymptote for the function $f(x)=\dfrac{x^2}{x-1}$.</span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1">Degree of numerator $=2$ $=$ degree of denominator $+1$</div><div class="ln  fragment"  data-fragment-index="2">$f(x)=\dfrac{x^2-1+1}{x-1}=\dfrac{x^2-1}{x-1}+\dfrac{1}{x-1}$</div><div class="ln  fragment"  data-fragment-index="2">$\phantom{f(x)}=x+1+\dfrac{1}{x-1}$</div><div class="ln  fragment"  data-fragment-index="3">As $x\to\pm\infty$: $\dfrac{1}{x-1}\to0$</div><div class="answer fragment"  data-fragment-index="4">The slant asymptote is the line $y=x+1$</div></div><div><div class="fragment" data-fragment-index="5"><div class="glass figcard "><div class="plot-host" data-fig="ex1g"></div><div class="caption">Figure 4.4.2: $y=\dfrac{x^2}{x-1}$ and its asymptotes</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">نكتب البسط بحيث يقبل القسمة، فيظهر الجزء الخطي x + 1 والباقي يؤول للصفر. <br>عدد الضغطات في الشريحة: 6.</div></aside>
+</section>
+</section>
+<section>
+<section data-zmax="1.15" data-valign="top" data-item="Example 2 · (1)–(3)">
+<div class="sl"><div class="sl-top"><span class="num">2</span><span class="bt">Sketching a polynomial</span><span class="line"></span><span class="it">Example 2 · (1)–(3)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-ex">Example 2</span><div class="prob-q"><span class="qb">For the function $f(x)=x^4-4x^3$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>Domain:</b> $f$ is a polynomial $\Rightarrow D_f=\mathbb{R}$</div><div class="ln  fragment"  data-fragment-index="2"><b>(1)</b> $f'(x)=4x^3-12x^2=4x^2(x-3)$</div><div class="ln  fragment"  data-fragment-index="2">$f'(x)=0 \Rightarrow x=0,\ x=3$</div><div class="ln th fragment"  data-fragment-index="2">$\therefore$ critical numbers: $x=0,\ 3$</div></div><div><b class="fragment" data-fragment-index="3">(2)</b> <div class="glass nl fragment" data-fragment-index="3"><div class="nl-head">Sign of $f'$ &nbsp;⟹&nbsp; $f$ increasing / decreasing</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f'(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="3"><div class="nl-axis"></div><span class="nl-pt " style="left:40%"></span><span class="nl-pl" style="left:40%">$0$</span><span class="nl-pt " style="left:70%"></span><span class="nl-pl" style="left:70%">$3$</span></span><span class="fragment" data-fragment-index="4"><span class="nl-sg neg" style="left:20.0%">−</span><span class="nl-sg neg" style="left:55.0%">−</span><span class="nl-sg pos" style="left:85.0%">+</span></span><span class="fragment" data-fragment-index="5"><span class="nl-ar dn" style="left:20.0%">↘</span><span class="nl-ar dn" style="left:55.0%">↘</span><span class="nl-ar up" style="left:85.0%">↗</span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="6">Increasing on <span class="cu">$[3,\infty)$</span></div><div class="fragment" data-fragment-index="7">Decreasing on <span class="cd">$(-\infty,3]$</span></div></div><div class="fragment" data-fragment-index="8"><div class="ipbox"><b>(3)</b> local (relative) min at $x=3$: $f(3)=-27$ &nbsp;→&nbsp; <span class="ptx">$(3,-27)$</span><br>at $x=0$: $f'$ does not change sign $\Rightarrow$ no extremum</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">المجال في سطر، ثم النقط الحرجة 0 و 3، ثم خط الأعداد: − − + فتناقص ثم تزايد. صغرى محلية عند (3, −27) فقط. <br>عدد الضغطات في الشريحة: 12.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Example 2 · (4)">
+<div class="sl"><div class="sl-top"><span class="num">2</span><span class="bt">Sketching a polynomial</span><span class="line"></span><span class="it">Example 2 · (4)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q compact"><span class="prob-badge b-ex">Example 2</span><div class="prob-q"><span class="qb">For the function $f(x)=x^4-4x^3$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>(4)</b> $f''(x)=12x^2-24x=12x(x-2)$</div><div class="ln  fragment"  data-fragment-index="1">$f''(x)=0 \Rightarrow x=0,\ x=2$</div><div class="ln  fragment"  data-fragment-index="2">$f(0)=0,\quad f(2)=16-32=-16$</div></div><div><div class="glass nl fragment" data-fragment-index="3"><div class="nl-head">Sign of $f''$ &nbsp;⟹&nbsp; concavity of $f$</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f''(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="3"><div class="nl-axis"></div><span class="nl-pt " style="left:40%"></span><span class="nl-pl" style="left:40%">$0$</span><span class="nl-pt " style="left:70%"></span><span class="nl-pl" style="left:70%">$2$</span></span><span class="fragment nlsigns" data-fragment-index="4"><span class="nl-sg pos" style="left:20.0%">+</span><span class="nl-sg neg" style="left:55.0%">−</span><span class="nl-sg pos" style="left:85.0%">+</span></span><span class="fragment" data-fragment-index="5"><span class="nl-arc up" style="left:20.0%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span><span class="nl-arc dn" style="left:55.0%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:85.0%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="6">Concave up on <span class="cu">$(-\infty,0),\ (2,\infty)$</span></div><div class="fragment" data-fragment-index="7">Concave down on <span class="cd">$(0,2)$</span></div></div><div class="fragment" data-fragment-index="8"><div class="ipbox">inflection points: <span class="pip">$(0,0)$</span> and <span class="pip">$(2,-16)$</span></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">f″ = 12x(x − 2): + − +، ونقطتا الانقلاب (0, 0) و (2, −16) بالبنفسجي. <br>عدد الضغطات في الشريحة: 10.</div></aside>
+</section>
+<section data-zmax="1.0" data-valign="top" data-item="Example 2 · (5) sketch">
+<div class="sl"><div class="sl-top"><span class="num">2</span><span class="bt">Sketching a polynomial</span><span class="line"></span><span class="it">Example 2 · (5) sketch</span></div><div class="sl-main"><div class="sl-fit">
+<div class="sk"><div><div class="ln info fragment"  data-fragment-index="1"><b>Intercepts:</b> $y$: $x=0\Rightarrow(0,0)$ &nbsp;·&nbsp; $x$: $x^3(x-4)=0\Rightarrow(0,0),\ (4,0)$</div><div class="ln info fragment"  data-fragment-index="2"><b>Asymptotes:</b> $f$ is a polynomial $\Rightarrow$ <b>no asymptotes</b></div><div class="fragment" data-fragment-index="3"><div class="glass figcard"><div class="plot-host" data-fig="sk2" data-frags="12,13,14,15"></div></div></div></div><div><div class="skr"><div class="glass cl"><div class="cl-grid"><div class="cl-labs"><span style="top:34px">concavity $(f'')$</span><span style="top:128px">inc / dec $(f')$</span><span style="top:192px;font-size:1.15rem">$f$</span></div><div class="cl-track"><span class="fragment" data-fragment-index="4"><span class="cl-g" style="left:30%"></span><span class="cl-g" style="left:55%"></span><span class="cl-g" style="left:75%"></span><span class="cl-axis"></span><span class="cl-pt " style="left:30%"></span><span class="cl-pl" style="left:30%">$0$</span><span class="cl-pt " style="left:55%"></span><span class="cl-pl" style="left:55%">$2$</span><span class="cl-pt " style="left:75%"></span><span class="cl-pl" style="left:75%">$3$</span></span><span class="fragment" data-fragment-index="5"><span class="cl-arc up" style="left:15.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc dn" style="left:42.5%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc up" style="left:65.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc up" style="left:87.5%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span></span><span class="fragment" data-fragment-index="6"><span class="cl-ar" style="left:15.0%">↘</span><span class="cl-ar" style="left:42.5%">↘</span><span class="cl-ar" style="left:65.0%">↘</span><span class="cl-ar" style="left:87.5%">↗</span></span><span class="cl-pc fragment"  data-fragment-index="8" style="left:15.0%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="9" style="left:42.5%"><svg viewBox="0 0 78 50"><path class="k2" d="M4 4 Q64 6 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="10" style="left:65.0%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="11" style="left:87.5%"><svg viewBox="0 0 78 50"><path class="k4" d="M4 46 Q64 44 74 4"/></svg></span></div></div></div><div class="skbot"><p class="ipnote" style="margin:0;font-size:0.95rem">In each interval take the arrow (↗ / ↘) and the arc (c.U / c.D), find the matching quarter of the circle, and draw that piece in its colour.</p><div class="glass legend44 fragment"  data-fragment-index="7"><svg viewBox="0 0 230 230"><path class="k1" d="M25 115 A90 90 0 0 1 115 25"/><path class="k2" d="M115 25 A90 90 0 0 1 205 115"/><path class="k3" d="M25 115 A90 90 0 0 0 115 205"/><path class="k4" d="M115 205 A90 90 0 0 0 205 115"/><line x1="115" y1="40" x2="115" y2="190" stroke="var(--rule)" stroke-width="1.5"/><line x1="40" y1="115" x2="190" y2="115" stroke="var(--rule)" stroke-width="1.5"/><text x="78" y="86" style="fill:var(--q1)">↗ c.D</text><text x="152" y="86" style="fill:var(--q2)">↘ c.D</text><text x="78" y="156" style="fill:var(--q3)">↘ c.U</text><text x="152" y="156" style="fill:var(--q4)">↗ c.U</text><text class="lc" x="78" y="104">inc · down</text><text class="lc" x="152" y="104">dec · down</text><text class="lc" x="78" y="174">dec · up</text><text class="lc" x="152" y="174">inc · up</text></svg></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">نقط التقاطع ثم لا خطوط تقارب، ثم المحاور بالنقط، ثم الخط المجمّع: التقعر فوق والتزايد تحت، ثم الدائرة، ثم قطع f فترة فترة، ثم المنحنى بنفس الألوان. <br>عدد الضغطات في الشريحة: 11.</div></aside>
+</section>
+</section>
+<section>
+<section data-zmax="1.15" data-valign="top" data-item="Example 3 · (1)–(3)">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 3 · (1)–(3)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-ex">Example 3</span><div class="prob-q"><span class="qb">For the function $f(x)=\dfrac{(x+1)^2}{1+x^2}$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>Domain:</b> $1+x^2\ne0 \Rightarrow D_f=\mathbb{R}$</div><div class="ln  fragment"  data-fragment-index="2"><b>(1)</b> $f'(x)=\dfrac{2(x+1)(1+x^2)-(x+1)^2(2x)}{(1+x^2)^2}$</div><div class="ln  fragment"  data-fragment-index="2">$\phantom{(1)\ f'(x)}=\dfrac{2(1-x^2)}{(1+x^2)^2}$</div><div class="ln  fragment"  data-fragment-index="3">$f'(x)=0 \Rightarrow x=\pm1$</div><div class="ln th fragment"  data-fragment-index="3">$\therefore$ critical numbers: $x=-1,\ 1$</div></div><div><b class="fragment" data-fragment-index="4">(2)</b> <div class="glass nl fragment" data-fragment-index="4"><div class="nl-head">Sign of $f'$ &nbsp;⟹&nbsp; $f$ increasing / decreasing</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f'(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="4"><div class="nl-axis"></div><span class="nl-pt " style="left:35%"></span><span class="nl-pl" style="left:35%">$-1$</span><span class="nl-pt " style="left:65%"></span><span class="nl-pl" style="left:65%">$1$</span></span><span class="fragment" data-fragment-index="5"><span class="nl-sg neg" style="left:17.5%">−</span><span class="nl-sg pos" style="left:50.0%">+</span><span class="nl-sg neg" style="left:82.5%">−</span></span><span class="fragment" data-fragment-index="6"><span class="nl-ar dn" style="left:17.5%">↘</span><span class="nl-ar up" style="left:50.0%">↗</span><span class="nl-ar dn" style="left:82.5%">↘</span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="7">Increasing on <span class="cu">$[-1,1]$</span></div><div class="fragment" data-fragment-index="8">Decreasing on <span class="cd">$(-\infty,-1],\ [1,\infty)$</span></div></div><div class="fragment" data-fragment-index="9"><div class="ipbox"><b>(3)</b> local (relative) min: <span class="ptx">$(-1,0)$</span> &nbsp;·&nbsp; local (relative) max: <span class="ptx">$(1,2)$</span></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">المقام موجب دائماً. النقطتان ±1، والإشارة − + −. صغرى (−1, 0) وعظمى (1, 2). <br>عدد الضغطات في الشريحة: 13.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Example 3 · (4)">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 3 · (4)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q compact"><span class="prob-badge b-ex">Example 3</span><div class="prob-q"><span class="qb">For the function $f(x)=\dfrac{(x+1)^2}{1+x^2}$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>(4)</b> $f''(x)=\dfrac{4x(x^2-3)}{(1+x^2)^3}$</div><div class="ln  fragment"  data-fragment-index="1">$f''(x)=0 \Rightarrow x=0,\ \pm\sqrt3$</div><div class="ln  fragment"  data-fragment-index="2">$f(0)=1,\quad f(\pm\sqrt3)=1\pm\tfrac{\sqrt3}{2}$</div></div><div><div class="glass nl fragment" data-fragment-index="3"><div class="nl-head">Sign of $f''$ &nbsp;⟹&nbsp; concavity of $f$</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f''(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="3"><div class="nl-axis"></div><span class="nl-pt " style="left:25%"></span><span class="nl-pl" style="left:25%">$-\sqrt3$</span><span class="nl-pt " style="left:50%"></span><span class="nl-pl" style="left:50%">$0$</span><span class="nl-pt " style="left:75%"></span><span class="nl-pl" style="left:75%">$\sqrt3$</span></span><span class="fragment nlsigns" data-fragment-index="4"><span class="nl-sg neg" style="left:12.5%">−</span><span class="nl-sg pos" style="left:37.5%">+</span><span class="nl-sg neg" style="left:62.5%">−</span><span class="nl-sg pos" style="left:87.5%">+</span></span><span class="fragment" data-fragment-index="5"><span class="nl-arc dn" style="left:12.5%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:37.5%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span><span class="nl-arc dn" style="left:62.5%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:87.5%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="6">Concave up on <span class="cu">$(-\sqrt3,0),\ (\sqrt3,\infty)$</span></div><div class="fragment" data-fragment-index="7">Concave down on <span class="cd">$(-\infty,-\sqrt3),\ (0,\sqrt3)$</span></div></div><div class="fragment" data-fragment-index="8"><div class="ipbox">inflection points: <span class="pip">$\left(-\sqrt3,1-\tfrac{\sqrt3}{2}\right)$</span>, <span class="pip">$(0,1)$</span>, <span class="pip">$\left(\sqrt3,1+\tfrac{\sqrt3}{2}\right)$</span></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">ثلاث نقط انقلاب. الإشارة − + − +. <br>عدد الضغطات في الشريحة: 10.</div></aside>
+</section>
+<section data-zmax="1.0" data-valign="top" data-item="Example 3 · (5) sketch">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 3 · (5) sketch</span></div><div class="sl-main"><div class="sl-fit">
+<div class="sk"><div><div class="ln info fragment"  data-fragment-index="1"><b>Intercepts:</b> $y$: $f(0)=1\Rightarrow(0,1)$ &nbsp;·&nbsp; $x$: $(x+1)^2=0\Rightarrow(-1,0)$</div><div class="ln info fragment"  data-fragment-index="2"><b>Asymptotes:</b> vertical: none ($1+x^2\ne0$) &nbsp;·&nbsp; horizontal: <b>$y=1$</b> (equal degrees) &nbsp;·&nbsp; slant: none</div><div class="fragment" data-fragment-index="3"><div class="glass figcard"><div class="plot-host" data-fig="sk3" data-frags="14,15,16,17,18,19"></div></div></div></div><div><div class="skr"><div class="glass cl"><div class="cl-grid"><div class="cl-labs"><span style="top:34px">concavity $(f'')$</span><span style="top:128px">inc / dec $(f')$</span><span style="top:192px;font-size:1.15rem">$f$</span></div><div class="cl-track"><span class="fragment" data-fragment-index="4"><span class="cl-g" style="left:16%"></span><span class="cl-g" style="left:32%"></span><span class="cl-g" style="left:50%"></span><span class="cl-g" style="left:68%"></span><span class="cl-g" style="left:84%"></span><span class="cl-axis"></span><span class="cl-pt " style="left:16%"></span><span class="cl-pl" style="left:16%">$-\sqrt3$</span><span class="cl-pt " style="left:32%"></span><span class="cl-pl" style="left:32%">$-1$</span><span class="cl-pt " style="left:50%"></span><span class="cl-pl" style="left:50%">$0$</span><span class="cl-pt " style="left:68%"></span><span class="cl-pl" style="left:68%">$1$</span><span class="cl-pt " style="left:84%"></span><span class="cl-pl" style="left:84%">$\sqrt3$</span></span><span class="fragment" data-fragment-index="5"><span class="cl-arc dn" style="left:8.0%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc up" style="left:24.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc up" style="left:41.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc dn" style="left:59.0%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc dn" style="left:76.0%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc up" style="left:92.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span></span><span class="fragment" data-fragment-index="6"><span class="cl-ar" style="left:8.0%">↘</span><span class="cl-ar" style="left:24.0%">↘</span><span class="cl-ar" style="left:41.0%">↗</span><span class="cl-ar" style="left:59.0%">↗</span><span class="cl-ar" style="left:76.0%">↘</span><span class="cl-ar" style="left:92.0%">↘</span></span><span class="cl-pc fragment"  data-fragment-index="8" style="left:8.0%"><svg viewBox="0 0 78 50"><path class="k2" d="M4 4 Q64 6 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="9" style="left:24.0%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="10" style="left:41.0%"><svg viewBox="0 0 78 50"><path class="k4" d="M4 46 Q64 44 74 4"/></svg></span><span class="cl-pc fragment"  data-fragment-index="11" style="left:59.0%"><svg viewBox="0 0 78 50"><path class="k1" d="M4 46 Q14 6 74 4"/></svg></span><span class="cl-pc fragment"  data-fragment-index="12" style="left:76.0%"><svg viewBox="0 0 78 50"><path class="k2" d="M4 4 Q64 6 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="13" style="left:92.0%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span></div></div></div><div class="skbot"><p class="ipnote" style="margin:0;font-size:0.95rem">In each interval take the arrow (↗ / ↘) and the arc (c.U / c.D), find the matching quarter of the circle, and draw that piece in its colour.</p><div class="glass legend44 fragment"  data-fragment-index="7"><svg viewBox="0 0 230 230"><path class="k1" d="M25 115 A90 90 0 0 1 115 25"/><path class="k2" d="M115 25 A90 90 0 0 1 205 115"/><path class="k3" d="M25 115 A90 90 0 0 0 115 205"/><path class="k4" d="M115 205 A90 90 0 0 0 205 115"/><line x1="115" y1="40" x2="115" y2="190" stroke="var(--rule)" stroke-width="1.5"/><line x1="40" y1="115" x2="190" y2="115" stroke="var(--rule)" stroke-width="1.5"/><text x="78" y="86" style="fill:var(--q1)">↗ c.D</text><text x="152" y="86" style="fill:var(--q2)">↘ c.D</text><text x="78" y="156" style="fill:var(--q3)">↘ c.U</text><text x="152" y="156" style="fill:var(--q4)">↗ c.U</text><text class="lc" x="78" y="104">inc · down</text><text class="lc" x="152" y="104">dec · down</text><text class="lc" x="78" y="174">dec · up</text><text class="lc" x="152" y="174">inc · up</text></svg></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">خط تقارب أفقي y = 1. ست فترات: كل فترة قطعة بلون ربعها في الدائرة. <br>عدد الضغطات في الشريحة: 13.</div></aside>
+</section>
+<section data-zmax="1.15" data-valign="top" data-item="Example 4 · (1)–(3)">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 4 · (1)–(3)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-ex">Example 4</span><div class="prob-q"><span class="qb">For the function $f(x)=\dfrac{x^2+4}{2x}$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>Domain:</b> $2x\ne0 \Rightarrow D_f=\mathbb{R}\setminus\{0\}$</div><div class="ln  fragment"  data-fragment-index="1">$f(x)=\tfrac{1}{2}x+\dfrac{2}{x}$</div><div class="ln  fragment"  data-fragment-index="2"><b>(1)</b> $f'(x)=\tfrac{1}{2}-\dfrac{2}{x^2}=\dfrac{x^2-4}{2x^2}$</div><div class="ln  fragment"  data-fragment-index="2">$f'(x)=0 \Rightarrow x=\pm2$</div><div class="ln  fragment"  data-fragment-index="2">$f'$ DNE at $x=0\notin D_f$ (not critical)</div><div class="ln th fragment"  data-fragment-index="2">$\therefore$ critical numbers: $x=-2,\ 2$</div></div><div><b class="fragment" data-fragment-index="3">(2)</b> <div class="glass nl fragment" data-fragment-index="3"><div class="nl-head">Sign of $f'$ &nbsp;⟹&nbsp; $f$ increasing / decreasing</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f'(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="3"><div class="nl-axis"></div><span class="nl-pt " style="left:25%"></span><span class="nl-pl" style="left:25%">$-2$</span><span class="nl-pt out" style="left:50%"></span><span class="nl-pl" style="left:50%">$0$<small class="out">$\notin D_f$</small></span><span class="nl-pt " style="left:75%"></span><span class="nl-pl" style="left:75%">$2$</span></span><span class="fragment" data-fragment-index="4"><span class="nl-sg pos" style="left:12.5%">+</span><span class="nl-sg neg" style="left:37.5%">−</span><span class="nl-sg neg" style="left:62.5%">−</span><span class="nl-sg pos" style="left:87.5%">+</span></span><span class="fragment" data-fragment-index="5"><span class="nl-ar up" style="left:12.5%">↗</span><span class="nl-ar dn" style="left:37.5%">↘</span><span class="nl-ar dn" style="left:62.5%">↘</span><span class="nl-ar up" style="left:87.5%">↗</span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="6">Increasing on <span class="cu">$(-\infty,-2],\ [2,\infty)$</span></div><div class="fragment" data-fragment-index="7">Decreasing on <span class="cd">$[-2,0),\ (0,2]$</span></div></div><div class="fragment" data-fragment-index="8"><div class="ipbox"><b>(3)</b> local (relative) max: <span class="ptx">$(-2,-2)$</span> &nbsp;·&nbsp; local (relative) min: <span class="ptx">$(2,2)$</span></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">الصفر خارج المجال (دائرة مفتوحة). العظمى المحلية قيمتها −2 أصغر من الصغرى 2 — ملاحظة جيدة للطلاب. <br>عدد الضغطات في الشريحة: 14.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Example 4 · (4)">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 4 · (4)</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q compact"><span class="prob-badge b-ex">Example 4</span><div class="prob-q"><span class="qb">For the function $f(x)=\dfrac{x^2+4}{2x}$, find the following (if any):<div class="reqs"><ol><li>The critical numbers of $f$.</li><li>The interval(s) on which $f$ is increasing and decreasing.</li><li>The local (relative) extrema of $f$.</li></ol><ol start="4"><li>The interval(s) on which $f$ is concave upward or downward, and the inflection points.</li><li>Sketch the graph of $f$.</li></ol></div></span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1"><b>(4)</b> $f''(x)=\dfrac{4}{x^3}$</div><div class="ln  fragment"  data-fragment-index="1">$f''(x)\ne0$; DNE at $x=0\notin D_f$</div></div><div><div class="glass nl fragment" data-fragment-index="2"><div class="nl-head">Sign of $f''$ &nbsp;⟹&nbsp; concavity of $f$</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f''(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="2"><div class="nl-axis"></div><span class="nl-pt out" style="left:50%"></span><span class="nl-pl" style="left:50%">$0$<small class="out">$\notin D_f$</small></span></span><span class="fragment nlsigns" data-fragment-index="3"><span class="nl-sg neg" style="left:25.0%">−</span><span class="nl-sg pos" style="left:75.0%">+</span></span><span class="fragment" data-fragment-index="4"><span class="nl-arc dn" style="left:25.0%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:75.0%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="5">Concave up on <span class="cu">$(0,\infty)$</span></div><div class="fragment" data-fragment-index="6">Concave down on <span class="cd">$(-\infty,0)$</span></div></div><div class="fragment" data-fragment-index="7"><div class="ipbox none"><b>no</b> inflection points: the concavity changes at $x=0$, but $0\notin D_f$</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">f″ = 4/x³: سالبة يسار الصفر وموجبة يمينه، لكن الصفر خارج المجال فلا انقلاب. <br>عدد الضغطات في الشريحة: 9.</div></aside>
+</section>
+<section data-zmax="1.0" data-valign="top" data-item="Example 4 · (5) sketch">
+<div class="sl"><div class="sl-top"><span class="num">3</span><span class="bt">Sketching rational functions</span><span class="line"></span><span class="it">Example 4 · (5) sketch</span></div><div class="sl-main"><div class="sl-fit">
+<div class="sk"><div><div class="ln info fragment"  data-fragment-index="1"><b>Intercepts:</b> $y$: $x=0\notin D_f$ — none &nbsp;·&nbsp; $x$: $x^2+4=0$ — no real roots, none</div><div class="ln info fragment"  data-fragment-index="2"><b>Asymptotes:</b> vertical: <b>$x=0$</b> &nbsp;·&nbsp; horizontal: none &nbsp;·&nbsp; slant: <b>$y=\tfrac{1}{2}x$</b> (since $f(x)=\tfrac{1}{2}x+\tfrac{2}{x}$)</div><div class="fragment" data-fragment-index="3"><div class="glass figcard"><div class="plot-host" data-fig="sk4" data-frags="12,13,14,15"></div></div></div></div><div><div class="skr"><div class="glass cl"><div class="cl-grid"><div class="cl-labs"><span style="top:34px">concavity $(f'')$</span><span style="top:128px">inc / dec $(f')$</span><span style="top:192px;font-size:1.15rem">$f$</span></div><div class="cl-track"><span class="fragment" data-fragment-index="4"><span class="cl-g" style="left:25%"></span><span class="cl-g" style="left:50%"></span><span class="cl-g" style="left:75%"></span><span class="cl-axis"></span><span class="cl-pt " style="left:25%"></span><span class="cl-pl" style="left:25%">$-2$</span><span class="cl-pt out" style="left:50%"></span><span class="cl-pl" style="left:50%">$0$</span><span class="cl-pt " style="left:75%"></span><span class="cl-pl" style="left:75%">$2$</span></span><span class="fragment" data-fragment-index="5"><span class="cl-arc dn" style="left:12.5%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc dn" style="left:37.5%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc up" style="left:62.5%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc up" style="left:87.5%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span></span><span class="fragment" data-fragment-index="6"><span class="cl-ar" style="left:12.5%">↗</span><span class="cl-ar" style="left:37.5%">↘</span><span class="cl-ar" style="left:62.5%">↘</span><span class="cl-ar" style="left:87.5%">↗</span></span><span class="cl-pc fragment"  data-fragment-index="8" style="left:12.5%"><svg viewBox="0 0 78 50"><path class="k1" d="M4 46 Q14 6 74 4"/></svg></span><span class="cl-pc fragment"  data-fragment-index="9" style="left:37.5%"><svg viewBox="0 0 78 50"><path class="k2" d="M4 4 Q64 6 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="10" style="left:62.5%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="11" style="left:87.5%"><svg viewBox="0 0 78 50"><path class="k4" d="M4 46 Q64 44 74 4"/></svg></span></div></div></div><div class="skbot"><p class="ipnote" style="margin:0;font-size:0.95rem">In each interval take the arrow (↗ / ↘) and the arc (c.U / c.D), find the matching quarter of the circle, and draw that piece in its colour.</p><div class="glass legend44 fragment"  data-fragment-index="7"><svg viewBox="0 0 230 230"><path class="k1" d="M25 115 A90 90 0 0 1 115 25"/><path class="k2" d="M115 25 A90 90 0 0 1 205 115"/><path class="k3" d="M25 115 A90 90 0 0 0 115 205"/><path class="k4" d="M115 205 A90 90 0 0 0 205 115"/><line x1="115" y1="40" x2="115" y2="190" stroke="var(--rule)" stroke-width="1.5"/><line x1="40" y1="115" x2="190" y2="115" stroke="var(--rule)" stroke-width="1.5"/><text x="78" y="86" style="fill:var(--q1)">↗ c.D</text><text x="152" y="86" style="fill:var(--q2)">↘ c.D</text><text x="78" y="156" style="fill:var(--q3)">↘ c.U</text><text x="152" y="156" style="fill:var(--q4)">↗ c.U</text><text class="lc" x="78" y="104">inc · down</text><text class="lc" x="152" y="104">dec · down</text><text class="lc" x="78" y="174">dec · up</text><text class="lc" x="152" y="174">inc · up</text></svg></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">لا تقاطعات. خط تقارب رأسي x = 0 ومائل y = x/2. الفترات الأربع تأخذ الأرباع الأربعة بالترتيب. <br>عدد الضغطات في الشريحة: 11.</div></aside>
+</section>
+</section>
+<section>
+<section data-zmax="1.2" data-valign="top" data-item="Challenging 2 · constants">
+<div class="sl"><div class="sl-top"><span class="num">4</span><span class="bt">Challenging & Communicate</span><span class="line"></span><span class="it">Challenging 2 · constants</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-ch">Challenging 2</span><div class="prob-q"><span class="qb">Find constants $a,\ b$ and $c$ such that $f(x)=ax^3+bx^2+c$ will have a local extremum at $(2,11)$ and a point of inflection at $(1,5)$. Sketch the graph of $y=f(x)$.</span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1">$f'(x)=3ax^2+2bx$</div><div class="ln  fragment"  data-fragment-index="1">$f''(x)=6ax+2b$</div><div class="ln  fragment"  data-fragment-index="2">Local extremum at $x=2$: $f'(2)=0$</div><div class="ln  fragment"  data-fragment-index="2">$12a+4b=0 \Rightarrow b=-3a$</div><div class="ln  fragment"  data-fragment-index="3">Inflection at $x=1$: $f''(1)=0$</div><div class="ln  fragment"  data-fragment-index="3">$6a+2b=0$ (same condition)</div><div class="ln  fragment"  data-fragment-index="4">$f(1)=5$: $a+b+c=5 \Rightarrow c=5+2a$</div></div><div><div class="ln  fragment"  data-fragment-index="5">$f(2)=11$: $8a+4b+c=11$</div><div class="ln  fragment"  data-fragment-index="5">$8a-12a+5+2a=11 \Rightarrow -2a=6$</div><div class="ln  fragment"  data-fragment-index="6">$\therefore\ a=-3,\quad b=9,\quad c=-1$</div><div class="answer fragment"  data-fragment-index="7">$f(x)=-3x^3+9x^2-1$</div><div class="ln  fragment"  data-fragment-index="8">local min <span class="ptx">$(0,-1)$</span>, local max <span class="ptx">$(2,11)$</span>, inflection point <span class="pip">$(1,5)$</span></div><div class="ln  fragment"  data-fragment-index="8">(from $f'=-9x(x-2)$ and $f''=-18(x-1)$)</div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">الشرطان على المشتقتين يعطيان نفس المعادلة b = −3a، فنحتاج شرطي القيمتين. الناتج −3x³ + 9x² − 1. <br>عدد الضغطات في الشريحة: 13.</div></aside>
+</section>
+<section data-zmax="1.0" data-valign="top" data-item="Challenging 2 · sketch">
+<div class="sl"><div class="sl-top"><span class="num">4</span><span class="bt">Challenging & Communicate</span><span class="line"></span><span class="it">Challenging 2 · sketch</span></div><div class="sl-main"><div class="sl-fit">
+<div class="sk"><div><div class="ln info fragment"  data-fragment-index="1"><b>Intercepts:</b> $y$: $(0,-1)$ &nbsp;·&nbsp; $x$: $-3x^3+9x^2-1=0$, three roots ($x\approx-0.31,\ 0.36,\ 2.96$)</div><div class="ln info fragment"  data-fragment-index="2"><b>Asymptotes:</b> polynomial $\Rightarrow$ <b>no asymptotes</b></div><div class="fragment" data-fragment-index="3"><div class="glass figcard"><div class="plot-host" data-fig="skc2" data-frags="12,13,14,15"></div></div></div></div><div><div class="skr"><div class="glass cl"><div class="cl-grid"><div class="cl-labs"><span style="top:34px">concavity $(f'')$</span><span style="top:128px">inc / dec $(f')$</span><span style="top:192px;font-size:1.15rem">$f$</span></div><div class="cl-track"><span class="fragment" data-fragment-index="4"><span class="cl-g" style="left:30%"></span><span class="cl-g" style="left:52%"></span><span class="cl-g" style="left:74%"></span><span class="cl-axis"></span><span class="cl-pt " style="left:30%"></span><span class="cl-pl" style="left:30%">$0$</span><span class="cl-pt " style="left:52%"></span><span class="cl-pl" style="left:52%">$1$</span><span class="cl-pt " style="left:74%"></span><span class="cl-pl" style="left:74%">$2$</span></span><span class="fragment" data-fragment-index="5"><span class="cl-arc up" style="left:15.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc up" style="left:41.0%"><svg viewBox="0 0 84 44"><path d="M4 6 Q42 52 80 6"/></svg><span>c.U</span></span><span class="cl-arc dn" style="left:63.0%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span><span class="cl-arc dn" style="left:87.0%"><svg viewBox="0 0 84 44"><path d="M4 40 Q42 -6 80 40"/></svg><span>c.D</span></span></span><span class="fragment" data-fragment-index="6"><span class="cl-ar" style="left:15.0%">↘</span><span class="cl-ar" style="left:41.0%">↗</span><span class="cl-ar" style="left:63.0%">↗</span><span class="cl-ar" style="left:87.0%">↘</span></span><span class="cl-pc fragment"  data-fragment-index="8" style="left:15.0%"><svg viewBox="0 0 78 50"><path class="k3" d="M4 4 Q14 44 74 46"/></svg></span><span class="cl-pc fragment"  data-fragment-index="9" style="left:41.0%"><svg viewBox="0 0 78 50"><path class="k4" d="M4 46 Q64 44 74 4"/></svg></span><span class="cl-pc fragment"  data-fragment-index="10" style="left:63.0%"><svg viewBox="0 0 78 50"><path class="k1" d="M4 46 Q14 6 74 4"/></svg></span><span class="cl-pc fragment"  data-fragment-index="11" style="left:87.0%"><svg viewBox="0 0 78 50"><path class="k2" d="M4 4 Q64 6 74 46"/></svg></span></div></div></div><div class="skbot"><p class="ipnote" style="margin:0;font-size:0.95rem">In each interval take the arrow (↗ / ↘) and the arc (c.U / c.D), find the matching quarter of the circle, and draw that piece in its colour.</p><div class="glass legend44 fragment"  data-fragment-index="7"><svg viewBox="0 0 230 230"><path class="k1" d="M25 115 A90 90 0 0 1 115 25"/><path class="k2" d="M115 25 A90 90 0 0 1 205 115"/><path class="k3" d="M25 115 A90 90 0 0 0 115 205"/><path class="k4" d="M115 205 A90 90 0 0 0 205 115"/><line x1="115" y1="40" x2="115" y2="190" stroke="var(--rule)" stroke-width="1.5"/><line x1="40" y1="115" x2="190" y2="115" stroke="var(--rule)" stroke-width="1.5"/><text x="78" y="86" style="fill:var(--q1)">↗ c.D</text><text x="152" y="86" style="fill:var(--q2)">↘ c.D</text><text x="78" y="156" style="fill:var(--q3)">↘ c.U</text><text x="152" y="156" style="fill:var(--q4)">↗ c.U</text><text class="lc" x="78" y="104">inc · down</text><text class="lc" x="152" y="104">dec · down</text><text class="lc" x="78" y="174">dec · up</text><text class="lc" x="152" y="174">inc · up</text></svg></div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">نفس طريقة الرسم: صغرى (0, −1)، انقلاب (1, 5)، عظمى (2, 11). <br>عدد الضغطات في الشريحة: 11.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Communicate 4 · inflection points">
+<div class="sl"><div class="sl-top"><span class="num">4</span><span class="bt">Challenging & Communicate</span><span class="line"></span><span class="it">Communicate 4 · inflection points</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q"><span class="prob-badge b-com">Communicate 4</span><div class="prob-q"><span class="qb">Show that the curve $f(x)=\dfrac{x+1}{x^2+1}$ has three points of inflection and they all lie on one straight line.</span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1">$f'(x)=\dfrac{(x^2+1)-(x+1)(2x)}{(x^2+1)^2}$</div><div class="ln  fragment"  data-fragment-index="1">$\phantom{f'(x)}=\dfrac{1-2x-x^2}{(x^2+1)^2}$</div><div class="ln  fragment"  data-fragment-index="2">$f''(x)=\dfrac{2(x^3+3x^2-3x-1)}{(x^2+1)^3}$</div><div class="ln  fragment"  data-fragment-index="2">$\phantom{f''(x)}=\dfrac{2(x-1)(x^2+4x+1)}{(x^2+1)^3}$</div><div class="ln  fragment"  data-fragment-index="3">$f''(x)=0 \Rightarrow x=1,\ x=-2\pm\sqrt3$</div></div><div><div class="glass nl fragment" data-fragment-index="4"><div class="nl-head">Sign of $f''$ &nbsp;⟹&nbsp; concavity of $f$</div><div class="nl-body"><div class="nl-row one"><div class="nl-lab"><span class="lf">$f(x)$</span><span class="lf2">$f''(x)$</span></div><div class="nl-track"><span class="fragment" data-fragment-index="4"><div class="nl-axis"></div><span class="nl-pt " style="left:16%"></span><span class="nl-pl" style="left:16%">$-2-\sqrt3$</span><span class="nl-pt " style="left:50%"></span><span class="nl-pl" style="left:50%">$-2+\sqrt3$</span><span class="nl-pt " style="left:82%"></span><span class="nl-pl" style="left:82%">$1$</span></span><span class="fragment nlsigns" data-fragment-index="5"><span class="nl-sg neg" style="left:8.0%">−</span><span class="nl-sg pos" style="left:33.0%">+</span><span class="nl-sg neg" style="left:66.0%">−</span><span class="nl-sg pos" style="left:91.0%">+</span></span><span class="fragment" data-fragment-index="6"><span class="nl-arc dn" style="left:8.0%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:33.0%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span><span class="nl-arc dn" style="left:66.0%"><svg viewBox="0 0 132 56"><path d="M8 52 Q66 -18 124 52"/></svg><span>c.D</span></span><span class="nl-arc up" style="left:91.0%"><svg viewBox="0 0 132 56"><path d="M8 8 Q66 78 124 8"/></svg><span>c.u</span></span></span></div></div></div><div class="nl-res"><div class="fragment" data-fragment-index="7">Concave up on <span class="cu">$(-2-\sqrt3,\,-2+\sqrt3),\ (1,\infty)$</span></div><div class="fragment" data-fragment-index="8">Concave down on <span class="cd">$(-\infty,-2-\sqrt3),\ (-2+\sqrt3,\,1)$</span></div></div><div class="fragment" data-fragment-index="9"><div class="ipbox">the sign changes at all three: <b>three</b> inflection points</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">f″ تتغير إشارتها عند الجذور الثلاثة، فهي ثلاث نقط انقلاب. <br>عدد الضغطات في الشريحة: 12.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="top" data-item="Communicate 4 · one straight line">
+<div class="sl"><div class="sl-top"><span class="num">4</span><span class="bt">Challenging & Communicate</span><span class="line"></span><span class="it">Communicate 4 · one straight line</span></div><div class="sl-main"><div class="sl-fit">
+<div class="glass q compact"><span class="prob-badge b-com">Communicate 4</span><div class="prob-q"><span class="qb">Show that the curve $f(x)=\dfrac{x+1}{x^2+1}$ has three points of inflection and they all lie on one straight line.</span></div></div><div class="work two split"><div><div class="ln  fragment"  data-fragment-index="1">$f(1)=1 \Rightarrow$ <span class="pip">$A(1,1)$</span></div><div class="ln  fragment"  data-fragment-index="2">$f(-2+\sqrt3)=\dfrac{1+\sqrt3}{4} \Rightarrow$ <span class="pip">$B$</span></div><div class="ln  fragment"  data-fragment-index="3">$f(-2-\sqrt3)=\dfrac{1-\sqrt3}{4} \Rightarrow$ <span class="pip">$C$</span></div><div class="ln  fragment"  data-fragment-index="4">slope of $AB=\dfrac{1-\frac{1+\sqrt3}{4}}{1-(-2+\sqrt3)}=\dfrac{\frac{3-\sqrt3}{4}}{3-\sqrt3}=\dfrac14$</div><div class="ln  fragment"  data-fragment-index="5">slope of $AC=\dfrac{1-\frac{1-\sqrt3}{4}}{1-(-2-\sqrt3)}=\dfrac{\frac{3+\sqrt3}{4}}{3+\sqrt3}=\dfrac14$</div><div class="ln  fragment"  data-fragment-index="6">$\therefore$ slope $AB=$ slope $AC$ with common point $A$</div><div class="answer fragment"  data-fragment-index="7">$\therefore\ A,\ B,\ C$ lie on one straight line &nbsp;■</div></div><div><div class="fragment" data-fragment-index="8"><div class="glass figcard "><div class="plot-host" data-fig="com4"></div><div class="caption">the three inflection points on $y=\dfrac{x+3}{4}$</div></div></div></div></div>
+</div></div></div>
+<aside class="notes"><div dir="rtl">نحسب النقط الثلاث، ونوجد معادلة المستقيم من نقطتين، ونتحقق أن الثالثة عليه. <br>عدد الضغطات في الشريحة: 8.</div></aside>
+</section>
+<section data-zmax="1.2" data-valign="center" data-item="Thank you">
+<div class="sl"><div class="sl-main"><div class="sl-fit"><div class="thanks">
+<h1><em>Thank you</em></h1><p>Questions &amp; discussion</p>
+<p style="margin-top:1.4rem;font-size:0.9rem">Dr. Wessam Gouda · Section 4.4 — Curve Sketching</p>
+</div></div></div></div>
+<aside class="notes"><div dir="rtl">نهاية العرض.</div></aside>
+</section>
+</section>
+</div>
+</div>
+
+<div id="bar">
+  <button class="ub sq" id="bPrev" title="Previous step (Shift + Space)" aria-label="Previous step"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+  <button class="ub sq" id="bNext" title="Next step (Space)" aria-label="Next step"><svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></button>
+  <span id="bPos"><b>Title</b></span>
+  <button class="ub" id="bBoard" title="Whiteboard (W)"><svg viewBox="0 0 24 24"><path d="M4 20l1.2-4.4L16.5 4.3a1.8 1.8 0 012.6 0l.6.6a1.8 1.8 0 010 2.6L8.4 18.8z"/><path d="M14.5 6.3l3.2 3.2"/></svg><span>Board</span></button>
+  <button class="ub sq" id="bOver" title="Overview of all slides (Esc)" aria-label="Overview"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2"/></svg></button>
+  <button class="ub sq" id="bFull" title="Full screen (F)" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  <button class="ub" id="themeBtn" title="Light / dark (T)" aria-label="Toggle theme"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2z"/></svg><span class="t-light">Light</span><span class="t-dark">Dark</span></button>
+</div>
+
+<div id="board" class="over">
+  <canvas></canvas>
+  <div id="boardbar">
+    <div class="grp"><span class="sw on" data-tok="teal"></span><span class="sw" data-tok="gold"></span><span class="sw" data-tok="ink"></span><span class="sw" data-tok="rose"></span><span class="sw" data-tok="blue"></span></div>
+    <span class="sep"></span>
+    <div class="grp"><button class="ub sq szbtn on" data-w="2.5" aria-label="Pen size 1"><i style="width:0.3em;height:0.3em"></i></button><button class="ub sq szbtn" data-w="5" aria-label="Pen size 2"><i style="width:0.55em;height:0.55em"></i></button><button class="ub sq szbtn" data-w="10" aria-label="Pen size 3"><i style="width:0.9em;height:0.9em"></i></button></div>
+    <span class="sep"></span>
+    <div class="grp">
+      <button class="ub js-eraser">Eraser</button>
+      <button class="ub js-undo">Undo</button>
+      <button class="ub js-clear">Clear</button>
+    </div>
+    <span class="sep"></span>
+    <div class="seg">
+      <button class="ub js-over on" title="Write on top of the slide">Over slide</button>
+      <button class="ub js-page" title="A clean ruled page">Blank page</button>
+    </div>
+    <span class="sep"></span>
+    <div class="grp">
+      <button class="ub sq js-prev" title="Previous step" aria-label="Previous step"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+      <button class="ub sq js-next" title="Next step" aria-label="Next step"><svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></button>
+      <button class="ub js-close" title="Close the board (Esc)"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Close</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========================================================================
+   0 · THEME
+   ======================================================================== */
+const ROOT=document.documentElement;
+const THEME_KEY='lesson-theme-modern';
+let theme='light';
+try{ theme=localStorage.getItem(THEME_KEY)||'light'; }catch(e){}
+ROOT.setAttribute('data-theme',theme);
+function P(){
+  const c=getComputedStyle(ROOT), g=v=>c.getPropertyValue(v).trim();
+  return {teal:g('--teal'),gold:g('--gold'),rose:g('--rose'),blue:g('--blue'),green:g('--green'),
+          ink:g('--text-hi'),mute:g('--text-lo'),rule:g('--rule'),bg:g('--bg-0'),
+          ptx:g('--ptx')||g('--text-hi'),pip:g('--pip')||'#7B1FA2'};
+}
+
+/* ========================================================================
+   1 · plot() — small SVG plotter used by every static figure
+   ======================================================================== */
+function plot(host,cfg){
+  const C=P(), col=t=>C[t]||t, FS=cfg.fs||1.3;   // lettering enlarged for the lecture hall
+  const w=cfg.w||900, h=cfg.h||520, pad=Object.assign({l:64,r:24,t:22,b:48},cfg.pad||{});
+  const [x0,x1]=cfg.xr, [y0,y1]=cfg.yr;
+  const X=x=>pad.l+(x-x0)/(x1-x0)*(w-pad.l-pad.r);
+  const Y=y=>h-pad.b-(y-y0)/(y1-y0)*(h-pad.t-pad.b);
+  const id='c'+Math.random().toString(36).slice(2,8);
+  const o=[];
+  o.push(`<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" font-family="Inter,sans-serif">`);
+  o.push(`<defs><clipPath id="${id}"><rect x="${pad.l}" y="${pad.t}" width="${w-pad.l-pad.r}" height="${h-pad.t-pad.b}"/></clipPath></defs>`);
+  // grid
+  if(cfg.gx){ for(let x=Math.ceil(x0/cfg.gx)*cfg.gx;x<=x1+1e-9;x+=cfg.gx)
+      o.push(`<line x1="${X(x)}" y1="${pad.t}" x2="${X(x)}" y2="${h-pad.b}" stroke="${C.rule}" stroke-width="1"/>`); }
+  if(cfg.gy){ for(let y=Math.ceil(y0/cfg.gy)*cfg.gy;y<=y1+1e-9;y+=cfg.gy)
+      o.push(`<line x1="${pad.l}" y1="${Y(y)}" x2="${w-pad.r}" y2="${Y(y)}" stroke="${C.rule}" stroke-width="1"/>`); }
+  (cfg.bands||[]).forEach(b=>o.push(`<rect x="${X(b.x0)}" y="${pad.t}" width="${X(b.x1)-X(b.x0)}" height="${h-pad.t-pad.b}" fill="${col(b.color)}" opacity="${b.a||0.10}"/>`));
+  // axes
+  const ay=(y0<=0&&y1>=0)?Y(0):h-pad.b, ax=(x0<=0&&x1>=0)?X(0):pad.l;
+  o.push(`<g stroke="${C.mute}" stroke-width="1.6" fill="${C.mute}">`
+    +`<line x1="${pad.l}" y1="${ay}" x2="${w-pad.r+6}" y2="${ay}"/><path d="M${w-pad.r+12} ${ay} l-11 -5 v10z" stroke="none"/>`
+    +`<line x1="${ax}" y1="${h-pad.b}" x2="${ax}" y2="${pad.t-6}"/><path d="M${ax} ${pad.t-12} l-5 11 h10z" stroke="none"/></g>`);
+  o.push(`<text x="${w-pad.r+4}" y="${ay-12}" font-size="${Math.round(22*FS)}" font-style="italic" fill="${C.mute}" text-anchor="end">x</text>`);
+  o.push(`<text x="${ax+12}" y="${pad.t+8}" font-size="${Math.round(22*FS)}" font-style="italic" fill="${C.mute}">y</text>`);
+  const ts=Math.round((cfg.tickSize||18)*FS);
+  (cfg.xTicks||[]).forEach(t=>{ const tx=typeof t==='number'?{x:t,text:String(t).replace('-','−')}:t;
+    o.push(`<line x1="${X(tx.x)}" y1="${ay-5}" x2="${X(tx.x)}" y2="${ay+5}" stroke="${C.mute}" stroke-width="1.6"/>`);
+    o.push(`<text x="${X(tx.x)}" y="${ay+ts+8}" font-size="${ts}" fill="${C.mute}" text-anchor="middle">${tx.text}</text>`); });
+  (cfg.yTicks||[]).forEach(t=>{ const ty=typeof t==='number'?{y:t,text:String(t).replace('-','−')}:t;
+    o.push(`<line x1="${ax-5}" y1="${Y(ty.y)}" x2="${ax+5}" y2="${Y(ty.y)}" stroke="${C.mute}" stroke-width="1.6"/>`);
+    o.push(`<text x="${ax-10}" y="${Y(ty.y)+6}" font-size="${ts}" fill="${C.mute}" text-anchor="end">${ty.text}</text>`); });
+  o.push(`<g clip-path="url(#${id})">`);
+  (cfg.guides||[]).forEach(g=>o.push(`<line x1="${X(g.x)}" y1="${pad.t}" x2="${X(g.x)}" y2="${h-pad.b}" stroke="${col(g.color||'mute')}" stroke-width="1.8" stroke-dasharray="7 6"/>`));
+  (cfg.hguides||[]).forEach(g=>o.push(`<line x1="${pad.l}" y1="${Y(g.y)}" x2="${w-pad.r}" y2="${Y(g.y)}" stroke="${col(g.color||'mute')}" stroke-width="1.8" stroke-dasharray="7 6"/>`));
+  (cfg.curves||[]).forEach(c=>{
+    const n=c.n||800, lim=3*(y1-y0); let seg=[], segCol=null;
+    const flush=()=>{ if(seg.length>1) o.push(`<polyline points="${seg.join(' ')}" fill="none" stroke="${col(segCol)}" stroke-width="${c.w||4}" stroke-linecap="round" stroke-linejoin="round"${c.dash?` stroke-dasharray="${c.dash}"`:''}/>`); seg=[]; };
+    let prev=null;
+    for(let i=0;i<=n;i++){
+      const x=c.from+(c.to-c.from)*i/n, y=c.f(x);
+      if(!isFinite(y)||y<y0-lim||y>y1+lim||(c.gap!==undefined&&Math.abs(x-c.gap)<(c.to-c.from)/n*1.5)){ flush(); prev=null; continue; }
+      const k=c.colorBy?c.colorBy(prev?(x+prev)/2:x):(c.color||'blue');
+      if(k!==segCol && seg.length){ const last=seg[seg.length-1]; flush(); seg=[last]; }
+      segCol=k; seg.push(X(x).toFixed(1)+','+Y(y).toFixed(1)); prev=x;
+    }
+    flush();
+  });
+  (cfg.polys||[]).forEach(p=>o.push(`<polyline points="${p.pts.map(q=>X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)).join(' ')}" fill="none" stroke="${col(p.color||'ink')}" stroke-width="${p.w||2.4}" stroke-linecap="round"${p.dash?` stroke-dasharray="${p.dash}"`:''}/>`));
+  o.push(`</g>`);
+  (cfg.dots||[]).forEach(d=>o.push(`<circle cx="${X(d.x)}" cy="${Y(d.y)}" r="${d.r||7}" fill="${d.open?C.bg:col(d.color||'ink')}" stroke="${col(d.color||'ink')}" stroke-width="3"/>`));
+  (cfg.labels||[]).forEach(l=>o.push(`<text x="${X(l.x)+(l.dx||0)}" y="${Y(l.y)+(l.dy||0)}" font-size="${Math.round((l.size||21)*FS)}" fill="${col(l.color||'ink')}" text-anchor="${l.anchor||'start'}"${l.italic?' font-style="italic"':''}${l.bold?' font-weight="600"':''}>${l.text}</text>`));
+  o.push('</svg>');
+  host.innerHTML=o.join('');
+}
+
+/* ========================================================================
+   2 · STATIC FIGURES — every curve is coloured by the sign of f″
+   (teal: concave up, gold: concave down), the same code as the Explorer.
+   ======================================================================== */
+const PI=Math.PI, cbrt=Math.cbrt;
+const bySign=d2=>x=>{ const s=d2(x); return s>0?'teal':(s<0?'gold':'ink'); };
+const tan=(f,df,a,s)=>({pts:[[a-s,f(a)-df(a)*s],[a+s,f(a)+df(a)*s]],color:'mute',w:2.2,dash:'8 6'});
+const FIGS={
+  intro: host=>plot(host,{w:1000,h:430,xr:[-3.7,3.7],yr:[-1.75,1.75],
+    xTicks:[{x:-PI,text:'−π'},{x:-PI/2,text:'−π/2'},{x:PI/2,text:'π/2'},{x:PI,text:'π'}],yTicks:[-1,1],
+    curves:[{f:Math.sin,from:-PI,to:PI,colorBy:x=>x<0?'teal':'gold',w:5}],
+    polys:[tan(Math.sin,Math.cos,-2.4,0.6),tan(Math.sin,Math.cos,-PI/2,0.6),tan(Math.sin,Math.cos,-0.75,0.6),
+           tan(Math.sin,Math.cos,0.75,0.6),tan(Math.sin,Math.cos,PI/2,0.6),tan(Math.sin,Math.cos,2.4,0.6)],
+    labels:[{x:-PI/2,y:-1.52,text:'concave up — slopes increase',color:'teal',anchor:'middle',bold:true},
+            {x:PI/2,y:1.4,text:'concave down — slopes decrease',color:'gold',anchor:'middle',bold:true},
+            {x:-3.5,y:0.75,text:'y = sin x',italic:true,color:'ink'}]}),
+
+  cube: host=>plot(host,{w:620,h:420,xr:[-2,2],yr:[-6,6],xTicks:[-1,1],yTicks:[-4,4],
+    curves:[{f:x=>x**3,from:-1.85,to:1.85,colorBy:bySign(x=>6*x),w:5}],
+    dots:[{x:0,y:0,color:'ink',r:8}],
+    labels:[{x:0.15,y:-1.6,text:'inflection point',size:20},{x:0.95,y:4.6,text:'y = x³',italic:true},
+            {x:-1.85,y:2.2,text:'concave down',color:'gold',bold:true,size:19},{x:0.55,y:-4.6,text:'concave up',color:'teal',bold:true,size:19}]}),
+
+  rp1: host=>{ const d1=x=>0.5*(x**5/5+x**4/4-7*x**3/3-x*x/2+6*x)-1;
+    plot(host,{w:880,h:560,xr:[-5.4,5.4],yr:[-8.6,8.6],gx:1,gy:2,
+      xTicks:[-5,-4,-3,-2,-1,1,2,3,4,5],yTicks:[-8,-6,-4,-2,2,4,6,8],
+      curves:[{f:d1,from:-5.4,to:5.4,color:'blue',w:4.5}],
+      labels:[{x:-4.9,y:7,text:'y = f′(x)',italic:true,color:'blue',size:23}]}); },
+
+  ex2: host=>{ const d1=x=>5*x**3/3-1.5*x*x-2*x, d2=x=>5*x*x-3*x-2;
+    plot(host,{w:880,h:560,xr:[-2.2,2.4],yr:[-5,7],gx:0.5,gy:1,
+      xTicks:[-2,-1,1,2],yTicks:[-4,-2,2,4,6],
+      curves:[{f:d2,from:-2.2,to:2.4,color:'rose',w:4},{f:d1,from:-2.2,to:2.4,color:'blue',w:4}],
+      dots:[{x:-0.4,y:0,color:'rose',r:6},{x:1,y:0,color:'rose',r:6}],
+      labels:[{x:-1.95,y:5.9,text:'y = f″(x)',italic:true,color:'rose',size:23},
+              {x:-2.1,y:-3.6,text:'y = f′(x)',italic:true,color:'blue',size:23}]}); },
+
+  ex3g: host=>{ const f=x=>x**3-6*x*x+9*x+30;
+    plot(host,{w:1000,h:540,xr:[-1.4,5.4],yr:[-3,55],gx:1,gy:10,xTicks:[-1,1,2,3,4,5],yTicks:[20,40],
+      curves:[{f,from:-1.3,to:5.2,colorBy:bySign(x=>6*x-12),w:5}],
+      dots:[{x:2,y:32,r:8}],guides:[{x:2}],
+      labels:[{x:2.15,y:36,text:'(2, 32) inflection point',size:21},
+              {x:0.15,y:47,text:'concave down (−∞, 2)',color:'gold',bold:true},{x:3.2,y:22,text:'concave up (2, ∞)',color:'teal',bold:true}]}); },
+
+  ex6g: host=>{ const f=x=>(x+3)/(x-5);
+    plot(host,{w:1000,h:540,xr:[-15.5,20.5],yr:[-10.5,10.5],gx:5,gy:5,xTicks:[-15,-10,-5,5,10,15,20],yTicks:[-10,-5,5,10],
+      curves:[{f,from:-15.5,to:20.5,gap:5,colorBy:bySign(x=>16/(x-5)**3),w:5,n:2000}],
+      guides:[{x:5,color:'rose'}],hguides:[{y:1}],
+      labels:[{x:7,y:8,text:'concave up (5, ∞)',color:'teal',bold:true},{x:-14.5,y:-6,text:'concave down (−∞, 5)',color:'gold',bold:true},
+              {x:5.4,y:-9.6,text:'x = 5 ∉ D<tspan baseline-shift="sub" font-size="14">f</tspan>',color:'rose',size:19},{x:-14.8,y:2.3,text:'y = 1',color:'mute',size:19}]}); },
+
+  ex8g: host=>{ const f=x=>cbrt(x*x)*(1-x), yi=1.2*cbrt(1/25);
+    plot(host,{w:1000,h:540,xr:[-2.1,2.1],yr:[-2,5.2],gx:0.5,gy:1,
+      xTicks:[-2,-1.5,-1,-0.5,0.5,1,1.5,2].map(v=>({x:v,text:String(v).replace('-','−')})),yTicks:[-1,1,2,3,4],
+      curves:[{f,from:-2,to:2,colorBy:bySign(x=>-2*(5*x+1)/(9*cbrt(x)**4)),w:5,n:2000}],
+      dots:[{x:-0.2,y:yi,r:8}],
+      labels:[{x:-0.32,y:0.2,text:'inflection point (−0.2, 0.41)',anchor:'end',size:20},
+              {x:-1.95,y:1.25,text:'concave up',color:'teal',bold:true},{x:0.55,y:2.0,text:'concave down',color:'gold',bold:true},
+              {x:0.1,y:-1.5,text:'cusp at 0: f″ DNE, no sign change',color:'blue',size:18}]}); },
+
+  ex9g: host=>{ const f=x=>x+Math.sin(x);
+    plot(host,{w:1000,h:540,xr:[-0.4,6.9],yr:[-0.4,7.2],gy:1,
+      xTicks:[{x:PI/2,text:'π/2'},{x:PI,text:'π'},{x:3*PI/2,text:'3π/2'},{x:2*PI,text:'2π'}],yTicks:[2,4,6],
+      curves:[{f,from:0,to:2*PI,colorBy:bySign(x=>-Math.sin(x)),w:5}],
+      dots:[{x:PI,y:PI,r:8},{x:0,y:0,r:6},{x:2*PI,y:2*PI,r:6}],
+      labels:[{x:PI+0.15,y:PI-0.55,text:'(π, π)',size:21},
+              {x:0.25,y:4.6,text:'concave down (0, π)',color:'gold',bold:true},{x:3.9,y:2.6,text:'concave up (π, 2π)',color:'teal',bold:true}]}); },
+
+  ex10g: host=>{ const f=x=>3*x**4-4*x**3-6*x*x+12*x+1;
+    plot(host,{w:1000,h:560,xr:[-2.25,2.25],yr:[-16,40],gx:0.5,gy:10,
+      xTicks:[-2,-1.5,-1,-0.5,0.5,1,1.5,2].map(v=>({x:v,text:String(v).replace('-','−')})),yTicks:[-10,10,20,30],
+      curves:[{f,from:-2,to:2,colorBy:bySign(x=>36*x*x-24*x-12),w:5}],
+      dots:[{x:-2,y:33,r:6},{x:2,y:17,r:6},{x:-1,y:-10,color:'rose',r:7},{x:-1/3,y:-94/27,r:8},{x:1,y:6,r:8}],
+      labels:[{x:-1.95,y:33,text:'(−2, 33)',size:20,dx:12},{x:1.95,y:17,text:'(2, 17)',size:20,anchor:'end',dx:-12},
+              {x:1,y:6,text:'(1, 6)',size:20,dx:-14,dy:-16,anchor:'end'},{x:-1/3,y:-94/27,text:'(−1/3, −94/27)',size:20,dx:14,dy:30},
+              {x:-1,y:-10,text:'local min (−1, −10)',size:20,color:'rose',dy:34,anchor:'middle'}]}); }
+};
+
+Object.assign(FIGS,{
+  ch5a: host=>{ const h=x=>Math.exp(-x*x), r=1/Math.SQRT2;
+    plot(host,{w:900,h:520,xr:[-3,3],yr:[-0.15,1.25],xTicks:[-2,-1,1,2],yTicks:[0.5,1],
+      curves:[{f:h,from:-3,to:3,colorBy:bySign(x=>4*x*x-2),w:5}],
+      dots:[{x:-r,y:h(r),r:8},{x:r,y:h(r),r:8}],
+      labels:[{x:0.1,y:1.15,text:'concave down near 0',color:'gold',bold:true},
+              {x:-2.9,y:0.35,text:'concave up',color:'teal',bold:true},{x:2.9,y:0.35,text:'concave up',color:'teal',bold:true,anchor:'end'}]}); },
+  ch5b: host=>{ const h=x=>Math.exp(-(Math.exp(x)+x));
+    plot(host,{w:900,h:400,xr:[-2.2,1.8],yr:[-0.6,7.2],gy:1,xTicks:[-2,-1,1],yTicks:[2,4,6],
+      curves:[{f:h,from:-2.1,to:1.7,color:'teal',w:5}],
+      labels:[{x:0.12,y:4.6,text:'concave up on ℝ',color:'teal',bold:true}]}); }
+});
+
+/* ---- Section 4.4 figures ---- */
+const SQ3=Math.sqrt(3);
+/* A sketch figure: axes, points and asymptotes from plot(); then the curve in coloured pieces,
+   one piece per interval, each piece a reveal.js fragment (indices come from data-frags). */
+function sketchFig(host, cfg){
+  plot(host, cfg);
+  const svg=host.querySelector('svg'); if(!svg) return;
+  const w=cfg.w, h=cfg.h, pad=Object.assign({l:64,r:24,t:22,b:48},cfg.pad||{}), [x0,x1]=cfg.xr, [y0,y1]=cfg.yr;
+  const X=x=>pad.l+(x-x0)/(x1-x0)*(w-pad.l-pad.r), Y=y=>h-pad.b-(y-y0)/(y1-y0)*(h-pad.t-pad.b);
+  const cs=getComputedStyle(document.documentElement), col=k=>cs.getPropertyValue('--q'+k).trim();
+  const frags=(host.dataset.frags||'').split(',').filter(Boolean).map(Number);
+  const NS='http://www.w3.org/2000/svg';
+  const g=document.createElementNS(NS,'g');
+  const clipId='sk'+Math.random().toString(36).slice(2,7);
+  g.innerHTML=`<clipPath id="${clipId}"><rect x="${pad.l}" y="${pad.t}" width="${w-pad.l-pad.r}" height="${h-pad.t-pad.b}"/></clipPath>`;
+  cfg.pieces.forEach((p,i)=>{
+    const a=Math.max(p[0],x0), b=Math.min(p[1],x1), n=400, lim=3*(y1-y0); let seg=[], segs=[];
+    for(let j=0;j<=n;j++){ const x=a+(b-a)*j/n, y=cfg.f(x);
+      if(!isFinite(y)||y<y0-lim||y>y1+lim){ if(seg.length>1) segs.push(seg); seg=[]; continue; }
+      seg.push(X(x).toFixed(1)+','+Y(y).toFixed(1)); }
+    if(seg.length>1) segs.push(seg);
+    const pg=document.createElementNS(NS,'g');
+    pg.setAttribute('clip-path',`url(#${clipId})`);
+    if(frags[i]!==undefined){ pg.setAttribute('class','fragment'); pg.setAttribute('data-fragment-index',frags[i]); }
+    pg.innerHTML=segs.map(s=>`<polyline points="${s.join(' ')}" fill="none" stroke="${col(p[2])}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`).join('');
+    g.appendChild(pg);
+  });
+  const firstDot=svg.querySelector('circle');
+  firstDot ? svg.insertBefore(g, firstDot) : svg.appendChild(g);
+}
+const PT='ptx', IP='pip';
+Object.assign(FIGS,{
+  even: host=>plot(host,{w:460,h:320,xr:[-2.4,2.4],yr:[-0.6,4.6],xTicks:[-2,-1,1,2],fs:1.1,
+    curves:[{f:x=>x*x,from:-2.2,to:2.2,color:'teal',w:4.5}],dots:[{x:-1.5,y:2.25,color:'gold',r:7},{x:1.5,y:2.25,color:'gold',r:7}],
+    polys:[{pts:[[-1.5,2.25],[1.5,2.25]],color:'gold',dash:'6 5',w:2}],labels:[{x:0.9,y:4.1,text:'y = x²',italic:true}]}),
+  odd: host=>plot(host,{w:460,h:320,xr:[-2,2],yr:[-4.5,4.5],xTicks:[-1,1],fs:1.1,
+    curves:[{f:x=>x**3,from:-1.7,to:1.7,color:'teal',w:4.5}],dots:[{x:-1.3,y:-2.197,color:'gold',r:7},{x:1.3,y:2.197,color:'gold',r:7}],
+    polys:[{pts:[[-1.3,-2.197],[1.3,2.197]],color:'gold',dash:'6 5',w:2}],labels:[{x:0.35,y:3.6,text:'y = x³',italic:true}]}),
+  int1: host=>plot(host,{w:620,h:420,xr:[-3.6,3.6],yr:[-5.2,6],xTicks:[-3,-2,-1,1,2,3],yTicks:[-4,-2,2,4],gx:1,gy:1,fs:1.2,
+    curves:[{f:x=>x*x-4,from:-3.3,to:3.3,color:'blue',w:4.5}],dots:[{x:0,y:-4,color:'rose',r:8},{x:-2,y:0,color:'teal',r:8},{x:2,y:0,color:'teal',r:8}],
+    labels:[{x:0.15,y:-4.6,text:'(0, −4)',color:'rose',size:18},{x:-2,y:0,text:'(−2, 0)',dx:-10,dy:-14,anchor:'end',color:'teal',size:18},{x:2,y:0,text:'(2, 0)',dx:10,dy:-14,color:'teal',size:18}]}),
+  slant: host=>{ const f=x=>x/2+1+2/(x*x+1);
+    plot(host,{w:620,h:400,xr:[-6,6],yr:[-2.5,5.5],fs:1.2,
+      curves:[{f,from:-6,to:6,color:'blue',w:4.5}],polys:[{pts:[[-6,-2],[6,4]],color:'rose',w:2.5,dash:'9 7'}],
+      labels:[{x:3.2,y:1.6,text:'y = mx + b',color:'rose',size:19},{x:-1.4,y:3.6,text:'y = f(x)',color:'blue',size:19,italic:true}]}); },
+  ex1g: host=>{ const f=x=>x*x/(x-1);
+    plot(host,{w:620,h:420,xr:[-5,6],yr:[-8,12],gy:4,xTicks:[-4,-2,1,2,4],yTicks:[-4,4,8],fs:1.2,
+      curves:[{f,from:-5,to:6,gap:1,color:'blue',w:4.5,n:2000}],polys:[{pts:[[-5,-4],[6,7]],color:'rose',w:2.5,dash:'9 7'}],guides:[{x:1,color:'mute'}],
+      labels:[{x:3.3,y:3,text:'y = x + 1',color:'rose',size:19},{x:1.2,y:-7,text:'x = 1',color:'mute',size:17}]}); },
+  sk2: host=>sketchFig(host,{w:700,h:560,xr:[-1.6,4.7],yr:[-32,30],gx:1,gy:10,xTicks:[-1,1,2,3,4],yTicks:[-30,-20,-10,10,20],fs:1.1,
+    f:x=>x**4-4*x**3, pieces:[[-1.6,0,3],[0,2,2],[2,3,3],[3,4.7,4]],
+    dots:[{x:0,y:0,color:IP,r:8},{x:2,y:-16,color:IP,r:8},{x:3,y:-27,color:PT,r:9},{x:4,y:0,color:'mute',r:7}],
+    labels:[{x:0,y:0,text:'(0, 0)',dx:-10,dy:-14,anchor:'end',color:IP,size:17},{x:2,y:-16,text:'(2, −16)',dx:-12,anchor:'end',color:IP,size:17},
+            {x:3,y:-27,text:'(3, −27)',dx:16,dy:6,color:PT,size:17},{x:4,y:0,text:'(4, 0)',dx:10,dy:-12,size:17}]}),
+  sk3: host=>sketchFig(host,{w:700,h:560,xr:[-6.2,6.2],yr:[-0.35,2.4],gy:0.5,xTicks:[-6,-4,-2,2,4,6],yTicks:[1,2],fs:1.1,
+    f:x=>(x+1)**2/(1+x*x), pieces:[[-6.2,-SQ3,2],[-SQ3,-1,3],[-1,0,4],[0,1,1],[1,SQ3,2],[SQ3,6.2,3]],
+    hguides:[{y:1,color:'mute'}],
+    dots:[{x:-1,y:0,color:PT,r:9},{x:1,y:2,color:PT,r:9},{x:-SQ3,y:1-SQ3/2,color:IP,r:8},{x:0,y:1,color:IP,r:8},{x:SQ3,y:1+SQ3/2,color:IP,r:8}],
+    labels:[{x:-1,y:0,text:'(−1, 0)',dy:30,anchor:'middle',color:PT,size:17},{x:1,y:2,text:'(1, 2)',dy:-14,anchor:'middle',color:PT,size:17},
+            {x:-SQ3,y:1-SQ3/2,text:'(−√3, 1 − √3/2)',dx:-14,dy:-14,anchor:'end',color:IP,size:15},{x:0,y:1,text:'(0, 1)',dx:-12,dy:-10,anchor:'end',color:IP,size:16},
+            {x:SQ3,y:1+SQ3/2,text:'(√3, 1 + √3/2)',dx:12,dy:-10,color:IP,size:15},{x:5.9,y:1,text:'y = 1',dy:-10,anchor:'end',color:'mute',size:16}]}),
+  sk4: host=>sketchFig(host,{w:700,h:560,xr:[-7,7],yr:[-7,7],gx:1,gy:1,xTicks:[-6,-4,-2,2,4,6],yTicks:[-6,-4,-2,2,4,6],fs:1.1,
+    f:x=>(x*x+4)/(2*x), pieces:[[-7,-2,1],[-2,-0.0001,2],[0.0001,2,3],[2,7,4]],
+    polys:[{pts:[[-7,-3.5],[7,3.5]],color:'rose',w:2.5,dash:'9 7'}],guides:[{x:0,color:'rose'}],
+    dots:[{x:-2,y:-2,color:PT,r:9},{x:2,y:2,color:PT,r:9}],
+    labels:[{x:-2,y:-2,text:'(−2, −2)',dy:32,anchor:'middle',color:PT,size:17},{x:2,y:2,text:'(2, 2)',dy:32,anchor:'middle',color:PT,size:17},
+            {x:6.8,y:1.6,text:'y = ½x',anchor:'end',color:'rose',size:17},{x:0.3,y:-6.4,text:'x = 0',color:'rose',size:17}]}),
+  skc2: host=>sketchFig(host,{w:700,h:560,xr:[-1.1,3.4],yr:[-4,14],gx:1,gy:2,xTicks:[-1,1,2,3],yTicks:[-2,2,4,6,8,10,12],fs:1.1,
+    f:x=>-3*x**3+9*x*x-1, pieces:[[-1.1,0,3],[0,1,4],[1,2,1],[2,3.4,2]],
+    dots:[{x:0,y:-1,color:PT,r:9},{x:2,y:11,color:PT,r:9},{x:1,y:5,color:IP,r:8}],
+    labels:[{x:0,y:-1,text:'(0, −1)',dx:12,dy:24,color:PT,size:17},{x:2,y:11,text:'(2, 11)',dy:-16,anchor:'middle',color:PT,size:17},{x:1,y:5,text:'(1, 5)',dx:-12,anchor:'end',color:IP,size:17}]}),
+  com4: host=>{ const f=x=>(x+1)/(x*x+1), xs=[-2-SQ3,-2+SQ3,1];
+    plot(host,{w:900,h:440,xr:[-6,4.5],yr:[-0.7,1.5],gy:0.5,xTicks:[-6,-4,-2,2,4],yTicks:[-0.5,0.5,1],fs:1.15,
+      curves:[{f,from:-6,to:4.5,color:'blue',w:4.5,n:900}],polys:[{pts:[[-6,-0.75],[4.5,1.875]],color:'pip',w:2.5,dash:'9 7'}],
+      dots:xs.map(x=>({x,y:f(x),color:'pip',r:8})),
+      labels:[{x:-4.6,y:-0.55,text:'y = (x + 3)/4',color:'pip',size:18},{x:2.2,y:0.9,text:'y = (x+1)/(x²+1)',color:'blue',size:18,italic:true}]}); }
+});
+/* the curve pieces are fragments inside an SVG: after a redraw (theme change) give reveal.js the new elements */
+const _rf44=renderFigures;
+renderFigures=function(){ _rf44();
+  if(window.Reveal && Reveal.isReady && Reveal.isReady()){ const i=Reveal.getIndices(); Reveal.sync(); Reveal.slide(i.h,i.v,i.f); } };
+
+function renderFigures(){
+  document.querySelectorAll('[data-fig]').forEach(h=>{ const f=FIGS[h.dataset.fig]; if(f) f(h); });
+  if(typeof renderWidgets==='function') renderWidgets();
+}
+
+/* ========================================================================
+   3 · FIT — scale each slide's content to the 1600 x 900 canvas
+   ======================================================================== */
+function fitSlide(sec){
+  const main=sec.querySelector('.sl-main'), fit=sec.querySelector('.sl-fit');
+  if(!main||!fit) return true;
+  const W=main.clientWidth, H=main.clientHeight;
+  if(!W||!H) return false;
+  const zmax=parseFloat(sec.dataset.zmax||'1'), zmin=0.55;
+  const tall=z=>{ fit.style.width=(W/z)+'px'; return fit.offsetHeight*z; };
+  const wide=()=>{ for(const e of fit.querySelectorAll('.katex-display')) if(e.scrollWidth>e.clientWidth+1) return true; return false; };
+  const fits=z=>tall(z)<=H && !wide();
+  let z=zmax;
+  if(!fits(z)){
+    let lo=zmin, hi=zmax;
+    for(let i=0;i<10;i++){ const m=(lo+hi)/2; if(fits(m)) lo=m; else hi=m; }
+    z=lo;
+  }
+  const used=tall(z);
+  const dy=(sec.dataset.valign==='center') ? Math.max(0,(H-used)/2) : 0;
+  fit.style.transform=`translate(0px,${dy.toFixed(1)}px) scale(${z.toFixed(4)})`;
+  sec.dataset.z=z.toFixed(3);
+  return true;
+}
+function fitAll(force){
+  document.querySelectorAll('.reveal .slides section').forEach(sec=>{
+    if(!sec.querySelector(':scope > .sl')) return;
+    if(force) delete sec.dataset.fitted;
+    if(!sec.dataset.fitted && fitSlide(sec)) sec.dataset.fitted='1';
+  });
+}
+
+/* ========================================================================
+   4 · FULL-SCREEN BOARD (same as the 2.4 deck)
+   ======================================================================== */
+const Board=(function(){
+  const el=document.getElementById('board'), cv=el.querySelector('canvas'), ctx=cv.getContext('2d');
+  const INK={};
+  let mode='over', tok='teal', width=2.5, erasing=false, cur=null, pid=null, open=false;
+  const key=()=>{
+    if(!window.Reveal || !Reveal.isReady || !Reveal.isReady()) return '0.0';
+    const i=Reveal.getIndices(); return (i.h||0)+'.'+(i.v||0);
+  };
+  const slot =()=>{ const k=key(); return INK[k]||(INK[k]={over:[],page:[]}); };
+  const layer=()=>slot()[mode];
+  const frame=()=>{
+    const s=document.querySelector('.reveal .slides'), r=s?s.getBoundingClientRect():null;
+    return (r&&r.width) ? r : {left:0,top:0,width:window.innerWidth,height:window.innerHeight};
+  };
+  function stroke(s,r,i0){
+    if(!s.pts.length) return;
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.globalCompositeOperation = s.erase?'destination-out':'source-over';
+    ctx.strokeStyle = P()[s.tok]||s.tok;
+    ctx.lineWidth = s.w*r.width/1600;
+    const px=p=>[r.left+p[0]*r.width, r.top+p[1]*r.height];
+    const a=px(s.pts[Math.max(0,i0-1)]);
+    ctx.beginPath(); ctx.moveTo(a[0],a[1]);
+    if(s.pts.length===1) ctx.lineTo(a[0]+0.1,a[1]+0.1);
+    for(let i=Math.max(1,i0);i<s.pts.length;i++){ const b=px(s.pts[i]); ctx.lineTo(b[0],b[1]); }
+    ctx.stroke();
+    ctx.globalCompositeOperation='source-over';
+  }
+  function redraw(){ ctx.clearRect(0,0,window.innerWidth,window.innerHeight); const r=frame(); layer().forEach(s=>stroke(s,r,0)); }
+  function size(){
+    const dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(window.innerWidth*dpr); cv.height=Math.round(window.innerHeight*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0); redraw();
+  }
+  const pos=(e,r)=>[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];
+  cv.addEventListener('pointerdown',e=>{
+    if(pid!==null) return;
+    e.preventDefault(); pid=e.pointerId;
+    try{ cv.setPointerCapture(pid); }catch(_){}
+    const r=frame();
+    cur={tok:tok, w: erasing?width*5:width, erase:erasing, pts:[pos(e,r)]};
+    layer().push(cur); stroke(cur,r,0); mark();
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!cur || e.pointerId!==pid) return;
+    const r=frame(), n=cur.pts.length;
+    const evs=(e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+    evs.forEach(ev=>cur.pts.push(pos(ev,r)));
+    stroke(cur,r,n);
+  });
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>cv.addEventListener(ev,e=>{
+    if(e.pointerId!==pid) return; cur=null; pid=null;
+  }));
+  const sws=[...el.querySelectorAll('.sw')], szs=[...el.querySelectorAll('.szbtn')];
+  const bEr=el.querySelector('.js-eraser'), bOver=el.querySelector('.js-over'), bPage=el.querySelector('.js-page');
+  const paintSwatches=()=>sws.forEach(sw=>{ sw.style.background=P()[sw.dataset.tok]; });
+  function setErase(on){ erasing=on; bEr.classList.toggle('on',on); el.classList.toggle('erasing',on); }
+  function setMode(m){
+    mode=m; el.classList.toggle('over',m==='over'); el.classList.toggle('page',m==='page');
+    bOver.classList.toggle('on',m==='over'); bPage.classList.toggle('on',m==='page');
+    redraw();
+  }
+  sws.forEach(sw=>sw.addEventListener('click',()=>{ sws.forEach(o=>o.classList.remove('on')); sw.classList.add('on'); tok=sw.dataset.tok; setErase(false); }));
+  szs.forEach(b=>b.addEventListener('click',()=>{ szs.forEach(o=>o.classList.remove('on')); b.classList.add('on'); width=parseFloat(b.dataset.w); }));
+  bEr.addEventListener('click',()=>setErase(!erasing));
+  const undo=()=>{ layer().pop(); redraw(); mark(); };
+  el.querySelector('.js-undo').addEventListener('click',undo);
+  el.querySelector('.js-clear').addEventListener('click',()=>{ layer().length=0; redraw(); mark(); });
+  bOver.addEventListener('click',()=>setMode('over'));
+  bPage.addEventListener('click',()=>setMode('page'));
+  el.querySelector('.js-prev').addEventListener('click',()=>{ if(window.Reveal) Reveal.prev(); });
+  el.querySelector('.js-next').addEventListener('click',()=>{ if(window.Reveal) Reveal.next(); });
+  el.querySelector('.js-close').addEventListener('click',()=>toggle(false));
+  function mark(){
+    const s=INK[key()], b=document.getElementById('bBoard');
+    if(b) b.classList.toggle('has-ink', !!(s && (s.over.length || s.page.length)));
+  }
+  function toggle(force){
+    open = (typeof force==='boolean') ? force : !open;
+    el.classList.toggle('on',open);
+    document.body.classList.toggle('board-open',open);
+    if(open){ cur=null; pid=null; paintSwatches(); setMode(mode); size(); }
+    mark();
+  }
+  window.addEventListener('resize',()=>{ if(open) size(); });
+  document.addEventListener('keydown',e=>{
+    if(!open) return;
+    if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); toggle(false); }
+    else if((e.ctrlKey||e.metaKey) && (e.key==='z'||e.key==='Z')){ e.preventDefault(); e.stopImmediatePropagation(); undo(); }
+  }, true);
+  return { toggle, isOpen:()=>open, paintSwatches, refresh:()=>{ if(open){ cur=null; pid=null; redraw(); } mark(); } };
+})();
+
+/* ========================================================================
+   5 · EMBEDDED EXPLORER + PROCEDURE VIDEO
+   ======================================================================== */
+const explorer=document.getElementById('explorer');
+function explorerTheme(){ if(!explorer) return;
+  try{ const d=explorer.contentDocument; if(d&&d.documentElement) d.documentElement.setAttribute('data-theme',theme); }catch(e){}
+}
+if(explorer) explorer.addEventListener('load',()=>{
+  explorerTheme();
+  try{
+    const d=explorer.contentDocument, w=explorer.contentWindow;
+    // keys the lecturer uses for the deck are passed back to it; the arrows stay with the Explorer
+    d.addEventListener('keydown',e=>{
+      if(!window.Reveal) return;
+      if(e.key===' '||e.key==='PageDown'){ e.preventDefault(); e.shiftKey?Reveal.prev():Reveal.next(); }
+      else if(e.key==='PageUp'){ e.preventDefault(); Reveal.prev(); }
+      else if(e.key==='w'||e.key==='W'){ Board.toggle(); }
+      else if(e.key==='t'||e.key==='T'){ toggleTheme(); }
+    });
+    // after a drag or a click inside the Explorer, give the keyboard back to the deck
+    d.addEventListener('pointerup',()=>setTimeout(()=>{ try{ if(d.activeElement&&d.activeElement.blur) d.activeElement.blur(); }catch(_){} window.focus(); },0));
+  }catch(e){}
+});
+
+const vid=document.getElementById('procvid');
+if(vid){
+  vid.addEventListener('error',()=>vid.closest('.vidcard').classList.add('missing'));
+  const vsrc=vid.querySelector('source'); if(vsrc) vsrc.addEventListener('error',()=>vid.closest('.vidcard').classList.add('missing'));
+  ['play','pause','seeked','volumechange'].forEach(ev=>vid.addEventListener(ev,()=>{ if(document.activeElement===vid) vid.blur(); }));
+}
+
+/* ========================================================================
+   6 · WIRING
+   ======================================================================== */
+function toggleTheme(){
+  theme=(theme==='dark')?'light':'dark';
+  ROOT.setAttribute('data-theme',theme);
+  try{ localStorage.setItem(THEME_KEY,theme); }catch(e){}
+  renderFigures(); explorerTheme();
+  Board.paintSwatches(); Board.refresh();
+}
+document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+const giveBackKeys=()=>{ const a=document.activeElement; if(a && a!==document.body && a.blur) a.blur(); };
+document.addEventListener('click',e=>{ if(e.target.closest('button')) giveBackKeys(); });
+
+const $=id=>document.getElementById(id);
+$('bPrev').addEventListener('click',()=>{ if(window.Reveal) Reveal.prev(); });
+$('bNext').addEventListener('click',()=>{ if(window.Reveal) Reveal.next(); });
+$('bOver').addEventListener('click',()=>{ if(window.Reveal) Reveal.toggleOverview(); });
+$('bBoard').addEventListener('click',()=>Board.toggle());
+$('bFull').addEventListener('click',()=>{
+  const d=document, r=d.documentElement;
+  if(d.fullscreenElement||d.webkitFullscreenElement){ (d.exitFullscreen||d.webkitExitFullscreen).call(d); }
+  else{ const f=r.requestFullscreen||r.webkitRequestFullscreen; if(f){ const p=f.call(r); if(p&&p.catch) p.catch(()=>{}); } }
+});
+function updateBar(){
+  if(!window.Reveal || !Reveal.isReady()) return;
+  const i=Reveal.getIndices(), h=i.h||0, v=i.v||0;
+  $('bPos').innerHTML='<b>'+(h===0?'Title':h+'.'+(v+1))+'</b>'+(Reveal.getSlidePastCount()+1)+' / '+Reveal.getTotalSlides();
+  $('bPrev').disabled = Reveal.isFirstSlide() && !Reveal.availableFragments().prev;
+  $('bNext').disabled = Reveal.isLastSlide()  && !Reveal.availableFragments().next;
+  $('bOver').classList.toggle('on', Reveal.isOverview());
+}
+
+/* ========================================================================
+   7 · BOOT — KaTeX, then reveal.js, each with a second CDN
+   ======================================================================== */
+const CDN={
+  katex :['https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js','https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js'],
+  auto  :['https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js','https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js'],
+  reveal:['https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js','https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js'],
+  notes :['https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js','https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/notes/notes.js']
+};
+function loadScript(urls, ok){
+  return new Promise(res=>{
+    let i=0;
+    (function next(){
+      if(ok()) return res(true);
+      if(i>=urls.length) return res(false);
+      const s=document.createElement('script'); let done=false;
+      const fin=good=>{ if(done) return; done=true; clearTimeout(t); if(good&&ok()) res(true); else{ s.remove(); next(); } };
+      const t=setTimeout(()=>fin(false),12000);
+      s.onload=()=>fin(true); s.onerror=()=>fin(false);
+      s.src=urls[i++]; document.head.appendChild(s);
+    })();
+  });
+}
+function renderMath(){
+  if(typeof renderMathInElement!=='function') return;
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+    ignoredClasses:['notes'], throwOnError:false
+  });
+}
+async function boot(){
+  if(window.self!==window.top) document.body.classList.add('embedded');
+  renderFigures();
+  const math = loadScript(CDN.katex, ()=>typeof katex!=='undefined')
+    .then(()=>loadScript(CDN.auto, ()=>typeof renderMathInElement==='function')).then(renderMath);
+  const deck = loadScript(CDN.reveal, ()=>typeof Reveal!=='undefined')
+    .then(ok=>ok ? loadScript(CDN.notes, ()=>typeof RevealNotes!=='undefined').then(()=>true) : false);
+  const [, haveReveal] = await Promise.all([math, deck]);
+  if(!haveReveal){ document.body.classList.remove('booting'); document.body.classList.add('no-reveal'); return; }
+  await Reveal.initialize({
+    width:1600, height:900, margin:0, minScale:0.2, maxScale:4,
+    center:false, hash:true, respondToHashChanges:true,
+    controls:true, controlsLayout:'bottom-right', controlsBackArrows:'faded', controlsTutorial:true,
+    progress:true, slideNumber:false, transition:'slide', backgroundTransition:'none',
+    navigationMode:'default', overview:true, touch:true, help:true,
+    plugins:(typeof RevealNotes!=='undefined') ? [RevealNotes] : []
+  });
+  Reveal.addKeyBinding({keyCode:87, key:'W', description:'Whiteboard'}, ()=>Board.toggle());
+  Reveal.addKeyBinding({keyCode:84, key:'T', description:'Light / dark theme'}, toggleTheme);
+  const sync=()=>{ fitAll(false); updateBar(); Board.refresh(); };
+  ['slidechanged','fragmentshown','fragmenthidden','overviewshown','overviewhidden'].forEach(ev=>Reveal.on(ev,sync));
+  Reveal.on('slidechanged',()=>{ if(vid && !vid.paused) vid.pause(); });
+  Reveal.on('resize',()=>{ Board.refresh(); });
+  fitAll(true); updateBar();
+  document.body.classList.remove('booting');
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>fitAll(true));
+  window.addEventListener('load',()=>fitAll(true));
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+</script>
+</body>
+</html>
